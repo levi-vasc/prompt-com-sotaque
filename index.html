@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Monte seu Prompt com Sotaque | Laboratório de Adaptação Intercultural</title>
+
+  <!-- Favicon SVG -->
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎯</text></svg>">
+
+  <!-- Google Fonts: Inter & Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@700;800;900&display=swap"
+    rel="stylesheet">
+
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              blue: '#2563eb',
+              green: '#16a34a',
+              amber: '#eab308',
+              orange: '#f97316',
+              red: '#dc2626',
+              coral: '#ef4444',
+              dark: '#0f172a'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            display: ['"Plus Jakarta Sans"', 'Inter', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Canvas Confetti CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+
+  <style>
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+
+    /* Card styling inspired by the visual game */
+    .game-card {
+      transition: all 0.2s cubic-bezier(0.34, 1.25, 0.64, 1);
+      user-select: none;
+    }
+
+    .game-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.1);
+    }
+
+    .game-card:active {
+      transform: translateY(-1px);
+    }
+
+    .game-card.is-selected {
+      opacity: 0.45;
+      transform: scale(0.95);
+      pointer-events: none;
+      filter: grayscale(0.5);
+    }
+
+    /* Dashed Drop Zone */
+    .drop-zone {
+      border: 2.5px dashed #94a3b8;
+      background-color: rgba(248, 250, 252, 0.85);
+      transition: all 0.25s ease;
+    }
+
+    .drop-zone.drag-over {
+      border-color: #f97316;
+      background-color: rgba(254, 243, 199, 0.5);
+      transform: scale(1.005);
+    }
+
+    /* Slotted card tag */
+    .slotted-chip {
+      animation: popIn 0.25s cubic-bezier(0.34, 1.35, 0.64, 1);
+    }
+
+    @keyframes popIn {
+      0% {
+        opacity: 0;
+        transform: scale(0.7);
+      }
+
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+  </style>
+</head>
+
+<body
+  class="bg-[#f8fafc] text-slate-800 min-h-screen font-sans selection:bg-orange-500 selection:text-white flex flex-col justify-between">
+
+  <!-- ========================================== -->
+  <!-- TOPO: BARRA DE NAVEGAÇÃO & CRÉDITOS RÁPIDOS -->
+  <!-- ========================================== -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+
+      <!-- Brand & Project Tag -->
+      <div class="flex items-center gap-3 cursor-pointer" id="navHomeBtn">
+        <div
+          class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-green-500 to-orange-500 p-0.5 shadow-md flex-shrink-0">
+          <div
+            class="w-full h-full bg-white rounded-[10px] flex items-center justify-center font-black text-blue-600 text-lg">
+            🎯
+          </div>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-sm sm:text-base font-extrabold font-display tracking-tight text-slate-900">
+              <span class="text-blue-600">Monte</span> <span class="text-green-600">seu</span> <span
+                class="text-red-500">Prompt</span> <span class="text-orange-500">com Sotaque</span>
+            </h1>
+            <span
+              class="text-[10px] font-mono uppercase px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 font-bold border border-blue-200">
+              UEFS 2026
+            </span>
+          </div>
+          <p class="text-xs text-slate-500 hidden sm:block">
+            Grupo 08 • Tema 09: Tradução e Adaptação Intercultural em IAG
+          </p>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        <!-- Audio Feedback Toggle -->
+        <button id="toggleAudioBtn" title="Alternar efeitos sonoros"
+          class="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 transition">
+          <svg id="audioIconOn" class="w-4 h-4 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z">
+            </path>
+          </svg>
+          <svg id="audioIconOff" class="w-4 h-4 text-slate-400 hidden" fill="none" stroke="currentColor"
+            viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2">
+            </path>
+          </svg>
+        </button>
+
+        <!-- Ficha Crítica & Ética Button -->
+        <button id="openEthicsBtn"
+          class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold border border-slate-300 transition">
+          <span>📜</span>
+          <span class="hidden sm:inline">Ficha Crítica &amp; Ética</span>
+          <span class="sm:hidden">Ética</span>
+        </button>
+
+        <!-- Toggle Screen View (Tutorial vs. Jogo) -->
+        <button id="toggleViewBtn"
+          class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-sm transition">
+          <span id="toggleViewBtnText">Ver Jogo</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ============================================================== -->
+  <!-- TELA 1: TELA INICIAL / TUTORIAL (EXATAMENTE COMO NA IMAGEM 2) -->
+  <!-- ============================================================== -->
+  <section id="screenIntro"
+    class="py-10 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto flex-1 flex flex-col justify-center text-center">
+
+    <!-- Title -->
+    <h1 class="text-3xl sm:text-5xl font-black font-display tracking-tight text-slate-900 mb-2">
+      <span class="text-blue-600">Monte</span> <span class="text-green-600">seu</span> <span
+        class="text-red-500">Prompt</span>
+    </h1>
+
+    <h2 class="text-2xl sm:text-4xl font-extrabold font-display text-slate-900 mb-1">
+      Você é o engenheiro!
+    </h2>
+
+    <h3 class="text-xl sm:text-3xl font-black font-display text-orange-500 mb-4">
+      A IA só obedece!
+    </h3>
+
+    <p class="max-w-2xl mx-auto text-sm sm:text-base text-slate-600 leading-relaxed mb-8">
+      Monte um pedido pra uma inteligência artificial arrastando ou clicando em cartas de <strong>4 categorias</strong>.
+      Escolha bem — a qualidade, a representatividade e a ausência de preconceito na resposta dependem somente de você!
+    </p>
+
+    <!-- 4 Category Cards (Grid igual ao da Imagem 2) -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8 text-left">
+
+      <!-- PAPEL (Blue) -->
+      <div class="bg-blue-100/70 border border-blue-200/80 rounded-2xl p-4 sm:p-5 flex flex-col justify-between">
+        <div class="text-2xl sm:text-3xl mb-2 text-center">🎭</div>
+        <div>
+          <div class="font-extrabold text-blue-700 text-sm sm:text-base font-display text-center mb-0.5">
+            PAPEL
+          </div>
+          <div class="text-xs text-blue-900/80 font-medium text-center">
+            Quem a IA deve ser e de onde ela fala?
+          </div>
+        </div>
+      </div>
+
+      <!-- TAREFA (Green) -->
+      <div class="bg-green-100/70 border border-green-200/80 rounded-2xl p-4 sm:p-5 flex flex-col justify-between">
+        <div class="text-2xl sm:text-3xl mb-2 text-center">🎯</div>
+        <div>
+          <div class="font-extrabold text-green-700 text-sm sm:text-base font-display text-center mb-0.5">
+            TAREFA
+          </div>
+          <div class="text-xs text-green-900/80 font-medium text-center">
+            O que ela deve ensinar com rigor?
+          </div>
+        </div>
+      </div>
+
+      <!-- CONTEXTO (Yellow) -->
+      <div class="bg-amber-100/70 border border-amber-200/80 rounded-2xl p-4 sm:p-5 flex flex-col justify-between">
+        <div class="text-2xl sm:text-3xl mb-2 text-center">🔍</div>
+        <div>
+          <div class="font-extrabold text-amber-700 text-sm sm:text-base font-display text-center mb-0.5">
+            CONTEXTO
+          </div>
+          <div class="text-xs text-amber-900/80 font-medium text-center">
+            Para quem e em qual território real?
+          </div>
+        </div>
+      </div>
+
+      <!-- FORMATO / RESTRIÇÃO (Red/Pink) -->
+      <div class="bg-red-100/70 border border-red-200/80 rounded-2xl p-4 sm:p-5 flex flex-col justify-between">
+        <div class="text-2xl sm:text-3xl mb-2 text-center">📋</div>
+        <div>
+          <div class="font-extrabold text-red-600 text-sm sm:text-base font-display text-center mb-0.5">
+            RESTRIÇÃO
+          </div>
+          <div class="text-xs text-red-900/80 font-medium text-center">
+            O que a IA está proibida de fazer (anti-viés)?
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Comparação: Prompt Fraco vs Prompt Completo (Imagem 2) -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8 text-left">
+
+      <!-- Prompt Fraco (Anglocêntrico / Zero-Shot) -->
+      <div class="bg-red-50/80 border border-red-200 rounded-2xl p-4 sm:p-5">
+        <div class="flex items-center gap-1.5 font-black text-xs font-mono uppercase text-red-600 mb-2">
+          <span>⚠️</span> PROMPT FRACO (ZERO-SHOT)
+        </div>
+        <div
+          class="text-xs sm:text-sm text-slate-800 font-mono bg-white p-3 rounded-xl border border-red-200/60 mb-2 font-medium">
+          "Crie exemplos práticos do dia a dia para ensinar termodinâmica."
+        </div>
+        <p class="text-xs text-red-800 leading-relaxed">
+          A IA chuta a realidade do norte global: calefação no quarto, marshmallows na lareira e neve no telhado. Não
+          serve para a vivência dos alunos!
+        </p>
+      </div>
+
+      <!-- Prompt Completo (Intercultural) -->
+      <div class="bg-green-50/80 border border-green-200 rounded-2xl p-4 sm:p-5">
+        <div class="flex items-center gap-1.5 font-black text-xs font-mono uppercase text-green-700 mb-2">
+          <span>🏆</span> PROMPT INTERCULTURAL COMPLETO
+        </div>
+        <div
+          class="text-xs sm:text-sm text-slate-800 font-mono bg-white p-3 rounded-xl border border-green-200/60 mb-2 font-medium">
+          "Como professor na Bahia, explique a termodinâmica no calor urbano e nos ônibus coletivos, sem clichês
+          folclóricos."
+        </div>
+        <p class="text-xs text-green-800 leading-relaxed font-semibold">
+          Papel + Tarefa + Contexto + Restrição = Resposta rigorosa e sob medida.
+        </p>
+      </div>
+
+    </div>
+
+    <!-- Big Orange "Começar" Button -->
+    <div class="flex justify-center mb-6">
+      <button id="startPlayBtn"
+        class="w-full sm:w-auto px-12 sm:px-16 py-4 rounded-2xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-black text-lg sm:text-xl font-display shadow-lg shadow-orange-500/30 hover:shadow-orange-500/40 transform hover:-translate-y-0.5 active:translate-y-0 transition cursor-pointer">
+        Começar
+      </button>
+    </div>
+
+  </section>
+
+  <!-- ============================================================== -->
+  <!-- TELA 2: ÁREA PRINCIPAL DO JOGO (EXATAMENTE COMO NA IMAGEM 1)   -->
+  <!-- ============================================================== -->
+  <section id="screenGame" class="hidden py-6 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto flex-1 w-full">
+
+    <!-- Challenge / Mission Bar -->
+    <div
+      class="mb-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+      <div class="flex items-center gap-2.5">
+        <span class="text-2xl animate-bounce">🎯</span>
+        <div>
+          <span class="text-[11px] font-mono uppercase tracking-wider text-slate-400 font-bold block">Desafio
+            Selecionado</span>
+          <h2 id="missionTitle" class="text-base sm:text-lg font-black font-display text-slate-900">
+            Faça a IA explicar Termodinâmica e Clima Urbano
+          </h2>
+        </div>
+      </div>
+
+      <!-- Mission Switcher Tabs -->
+      <div class="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0" id="missionTabsContainer">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+
+    <!-- INSTRUÇÃO VISUAL -->
+    <div class="flex items-center justify-between mb-3 text-xs text-slate-500">
+      <span class="font-medium flex items-center gap-1.5">
+        <span class="w-2 h-2 rounded-full bg-orange-500"></span>
+        Clique ou arraste as cartas abaixo para construir seu pedido:
+      </span>
+      <span class="font-mono text-[11px] bg-slate-100 px-2 py-0.5 rounded text-slate-600" id="cardCounterInfo">
+        0 cartas selecionadas
+      </span>
+    </div>
+
+    <!-- GRID DE CARTAS VISUAIS (EXATAMENTE COMO NA IMAGEM 1) -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-3.5 mb-6"
+      id="cardsGridContainer">
+      <!-- Injected dynamically based on active mission -->
+    </div>
+
+    <!-- ÁREA DE DROP (ARRASTE AS CARTAS AQUI PARA MONTAR O PROMPT) -->
+    <div id="dropZoneArea"
+      class="drop-zone rounded-2xl p-4 sm:p-5 mb-4 min-h-[130px] flex flex-col justify-center items-center text-center relative">
+
+      <!-- Placeholder when empty -->
+      <div id="dropZonePlaceholder"
+        class="text-slate-400 text-xs sm:text-sm font-medium flex flex-col items-center gap-2 pointer-events-none select-none">
+        <svg class="w-6 h-6 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
+          </path>
+        </svg>
+        <span>Arraste ou clique nas cartas acima para montar o seu prompt...</span>
+      </div>
+
+      <!-- Container for slotted cards -->
+      <div id="slottedCardsContainer" class="flex flex-wrap gap-2 w-full justify-start items-center">
+        <!-- Chips injected here -->
+      </div>
+
+      <!-- Quick Clear Button (visible when not empty) -->
+      <button id="clearCardsBtn"
+        class="hidden absolute top-2 right-2 text-[10px] font-mono text-slate-400 hover:text-red-500 bg-white border border-slate-200 px-2 py-0.5 rounded-lg transition">
+        Limpar tudo ✕
+      </button>
+    </div>
+
+    <!-- PREVIEW DO PROMPT (BARRA ESCURA COMO NA IMAGEM 1) -->
+    <div class="bg-slate-900 text-slate-100 rounded-2xl p-4 sm:p-5 mb-4 shadow-md border border-slate-800">
+      <div
+        class="text-[11px] font-mono font-bold uppercase tracking-wider text-slate-400 mb-1 flex items-center justify-between">
+        <span class="flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-emerald-400"></span> PREVIEW DO PROMPT:
+        </span>
+        <button id="copyPromptBtn"
+          class="text-slate-400 hover:text-orange-400 text-[10px] font-mono flex items-center gap-1 transition">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z">
+            </path>
+          </svg>
+          Copiar
+        </button>
+      </div>
+      <div id="promptPreviewText" class="font-mono text-xs sm:text-sm text-slate-300 leading-relaxed min-h-[22px]">
+        Seu texto aparecerá aqui conforme você arrasta as cartas.
+      </div>
+    </div>
+
+    <!-- BOTÃO LARANJA PRINCIPAL: GERAR RESPOSTA DA IA (IMAGEM 1) -->
+    <div class="mb-6">
+      <button id="generateAIBtn"
+        class="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-orange-500 via-amber-500 to-orange-500 hover:from-orange-600 hover:via-amber-600 hover:to-orange-600 text-white font-black text-base sm:text-lg font-display tracking-wide shadow-lg shadow-orange-500/25 hover:shadow-orange-500/40 transform hover:-translate-y-0.5 active:translate-y-0 transition cursor-pointer flex items-center justify-center gap-2">
+        <span>✨ Gerar Resposta da IA</span>
+      </button>
+    </div>
+
+    <!-- ÁREA DE RESPOSTA DA IA (DIAGNÓSTICO CRÍTICO & RESULTADO) -->
+    <div id="aiResponseContainer" class="hidden space-y-4 pt-2 animate-in fade-in">
+
+      <!-- Feedback Card Header -->
+      <div id="aiFeedbackBanner"
+        class="p-4 sm:p-5 rounded-2xl border flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <!-- Injected: Success or Warning -->
+      </div>
+
+      <!-- Resposta Detalhada da IA -->
+      <div class="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 shadow-sm space-y-4">
+
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div class="flex items-center gap-2">
+            <span class="p-1 rounded-lg bg-slate-100 text-slate-700 text-sm">🤖</span>
+            <h4 class="font-extrabold text-sm sm:text-base font-display text-slate-900">
+              Retorno Gerado pelo Modelo
+            </h4>
+          </div>
+          <span id="aiQualityBadge" class="text-[10px] font-mono px-2 py-0.5 rounded-full font-bold">
+            <!-- Badge -->
+          </span>
+        </div>
+
+        <div id="aiOutputText" class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+          <!-- Text -->
+        </div>
+
+        <!-- Análise da Engenharia Intercultural (Explicação Pedagógica) -->
+        <div id="aiPedagogicalAnalysis"
+          class="p-4 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-600 leading-relaxed">
+          <!-- Analysis -->
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- ========================================== -->
+  <!-- MODAL: FICHA CRÍTICA & ÉTICA (GRUPO 08)   -->
+  <!-- ========================================== -->
+  <div id="ethicsModal"
+    class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-slate-950/70 backdrop-blur-sm hidden transition-opacity duration-200">
+    <div
+      class="bg-white border border-slate-200 rounded-3xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden animate-in fade-in zoom-in-95">
+
+      <!-- Modal Header -->
+      <div class="p-5 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div
+            class="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xl">
+            ⚖️
+          </div>
+          <div>
+            <h3 class="text-base sm:text-lg font-bold font-display text-slate-900">
+              Ficha Crítica &amp; Diretrizes Éticas
+            </h3>
+            <p class="text-xs text-slate-500">Grupo 08 • Tema 09: Tradução e Adaptação Intercultural em IAG</p>
+          </div>
+        </div>
+        <button id="closeEthicsModalBtn"
+          class="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-200 transition">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="p-5 overflow-y-auto space-y-4 text-xs sm:text-sm text-slate-600 leading-relaxed">
+
+        <div class="p-3.5 rounded-xl bg-blue-50 border border-blue-200">
+          <h4 class="font-bold text-blue-900 mb-0.5">1. Autoria Humana e Agência Pedagógica</h4>
+          <p class="text-blue-800 text-xs">
+            A IA não é oráculo cultural; é cálculo estatístico sobre corpora textuais hegemônicos. A mediação crítica e
+            o juízo ético pertencem exclusivamente ao professor e aos estudantes.
+          </p>
+        </div>
+
+        <div class="p-3.5 rounded-xl bg-amber-50 border border-amber-200">
+          <h4 class="font-bold text-amber-900 mb-0.5">2. Transparência Algorítmica e Corpora Hegemônicos</h4>
+          <p class="text-amber-800 text-xs">
+            Prompts Zero-Shot ativam, por inércia estatística, o padrão cultural anglocêntrico (neve, marshmallows, FICO
+            score). O viés é o comportamento padrão esperado sem contexto explícito.
+          </p>
+        </div>
+
+        <div class="p-3.5 rounded-xl bg-green-50 border border-green-200">
+          <h4 class="font-bold text-green-900 mb-0.5">3. Equidade Cognitiva e Territorialização dos Saberes</h4>
+          <p class="text-green-800 text-xs">
+            O aprendizado requer que o aluno reconheça a ciência em seu próprio ecossistema (transporte coletivo, clima
+            tropical, arranjos financeiros via Pix).
+          </p>
+        </div>
+
+        <div class="p-3.5 rounded-xl bg-red-50 border border-red-200">
+          <h4 class="font-bold text-red-900 mb-0.5">4. Mitigação do Folclorismo e da Caricatura</h4>
+          <p class="text-red-800 text-xs">
+            A adaptação rasa frequentemente cai no estereótipo ("Oxente cabra da peste"). O <em>Negative Prompting</em>
+            é essencial para interditar o clichê enquanto preserva o rigor científico.
+          </p>
+        </div>
+
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="p-4 border-t border-slate-200 bg-slate-50 flex justify-end">
+        <button id="closeEthicsModalBtn2"
+          class="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs transition">
+          Entendido
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toastNotification"
+    class="fixed bottom-6 right-6 z-50 flex items-center gap-2 px-4 py-3 rounded-2xl bg-slate-900 text-white shadow-xl text-xs font-mono transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+    <span id="toastIcon">✨</span>
+    <span id="toastMessage">Mensagem</span>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- RODAPÉ ACADÊMICO (EXATAMENTE COMO NA IMAGEM 2)                -->
+  <!-- ============================================================== -->
+  <footer class="bg-white border-t border-slate-200 py-6 px-4 text-center text-xs text-slate-500">
+    <div class="max-w-4xl mx-auto space-y-1.5">
+      <p class="font-bold text-slate-700">
+        UEFS 2026 | Disciplina: EXA085 - Inteligência Artificial Generativa na Educação
+      </p>
+      <p class="text-slate-600">
+        <strong>Desenvolvedores:</strong> Ítallo Guimarães, Levi Vasconcelos, Davi Oliveira, Guilherme Lima, Sinval
+        Victor Mota e Paulo Gabriel Silva
+      </p>
+      <p class="text-slate-400 text-[11px] flex items-center justify-center gap-1">
+        <span>🤖</span> Aplicação desenvolvida com o auxílio de IA Generativa (Pair Programming) para fins educacionais.
+      </p>
+    </div>
+  </footer>
+
+  <!-- ========================================== -->
+  <!-- JAVASCRIPT: DADOS E MECÂNICA DO JOGO      -->
+  <!-- ========================================== -->
+  <script>
+    /**
+     * DADOS DAS 4 MISSÕES TEMÁTICAS (GRUPO 08)
+     */
+    const missions = [
+      {
+        id: "fisica",
+        discipline: "Física",
+        title: "Faça a IA explicar Termodinâmica e Clima Urbano",
+        shortName: "Física Urbana",
+        icon: "🌡️",
+        cards: [
+          // PAPEL (Azul)
+          { id: "p1", category: "papel", color: "blue", title: "Professor no interior da Bahia", icon: "👨‍🏫", text: "Atue como um professor de Física do ensino médio em uma cidade do interior da Bahia" },
+          { id: "p2", category: "papel", color: "blue", title: "Cientista estrangeiro de laboratório", icon: "🧪", text: "Atue como um físico teórico em um laboratório climatizado" },
+          { id: "p3", category: "papel", color: "blue", title: "Narrador eufórico de futebol", icon: "⚽", text: "Atue como um narrador de futebol gritando calorosamente" },
+
+          // CONTEXTO (Amarelo)
+          { id: "c1", category: "contexto", color: "amber", title: "Ilha de calor urbana & ônibus lotado", icon: "🚌", text: "para estudantes que enfrentam ilhas de calor urbanas, ônibus coletivos cheios e telhas de zinco/fibrocimento" },
+          { id: "c2", category: "contexto", color: "amber", title: "Inverno rigoroso com calefação e neve", icon: "❄️", text: "para jovens que precisam ligar a calefação central no quarto no inverno e limpar a neve do telhado" },
+          { id: "c3", category: "contexto", color: "amber", title: "Sertão folclórico com sol rachando", icon: "🌵", text: "usando a cultura nordestina com o sol escaldante da caatinga seca" },
+
+          // TAREFA (Verde)
+          { id: "t1", category: "tarefa", color: "green", title: "Explique condução, convecção e radiação", icon: "🌡️", text: "explicando condução, convecção e radiação térmica usando o cotidiano material real dos estudantes" },
+          { id: "t2", category: "tarefa", color: "green", title: "Dê exemplos práticos do dia a dia", icon: "💡", text: "criando exemplos práticos do dia a dia sobre calor e temperatura" },
+
+          // RESTRIÇÃO (Vermelho)
+          { id: "r1", category: "restricao", color: "red", title: "Sem clichês folclóricos e com rigor", icon: "🚫", text: "sem utilizar clichês folclóricos, sem forçar gírias caricatas e mantendo o rigor científico das definições físicas" },
+          { id: "r2", category: "restricao", color: "red", title: "Como um roteiro de stand-up", icon: "🎭", text: "como um roteiro cômico de stand-up com piadas a cada frase" },
+          { id: "r3", category: "restricao", color: "red", title: "Em lista com emojis", icon: "📋", text: "em tópicos curtos acompanhados de emojis ilustrativos" }
+        ],
+        outputs: {
+          calibrated: {
+            title: "🏆 Prompt Intercultural Calibrado com Sucesso!",
+            status: "success",
+            text: `<strong>1. Radiação Térmica:</strong> O asfalto escuro das avenidas absorve a radiação eletromagnética solar direta e reemite calor infravermelho para os estudantes nos pontos de ônibus, criando o efeito de ilha de calor urbana.<br/><br/>
+                   <strong>2. Condução Térmica:</strong> O calor transferido por contato molecular direto ao tocar a lataria ou a cobertura de zinco do ponto de ônibus, cuja alta condutibilidade aquece rapidamente o ar sob a cobertura.<br/><br/>
+                   <strong>3. Convecção Térmica:</strong> No interior do ônibus coletivo em movimento lento, o ar quente sobe por ser menos denso, e a abertura das frestas superiores induz a circulação das correntes de ar.`,
+            analysis: "Excelente! Você evitou a lareira/neve (viés do norte global) e também barrou a caricatura forçada ('Oxente cabra da peste'), mantendo o rigor científico alinhado ao território real."
+          },
+          biased: {
+            title: "⚠️ Choque Estrangeiro: Viés Anglocêntrico Detectado!",
+            status: "biased",
+            text: `"1. Convecção: O aquecedor central (calefação) aquecendo o ar frio do quarto no inverno.<br/>
+                   2. Radiação: Assar marshmallows perto de uma lareira acesa com a família.<br/>
+                   3. Condução: O derretimento da neve acumulada no telhado de uma cabana aquecida."`,
+            analysis: "Observe como o modelo Zero-Shot acionou referências do hemisfério norte (calefação, lareira, neve). Para descolonizar o prompt, adicione a carta de Território Real (ônibus lotado / calor urbano) e o Papel do professor local."
+          },
+          caricature: {
+            title: "⚠️ Alucinação Folclórica: A Armadilha da Caricatura!",
+            status: "caricature",
+            text: `"Oxente, cabra da peste! Vamos estudar o calor do sertão escaldante assando um cuscuz no sol rachando da caatinga seca!"`,
+            analysis: "A IA tentou 'regionalizar', mas caiu no estereótipo exagerado e infantilizou os estudantes. Lembre-se de adicionar a carta vermelha de RESTRIÇÃO ('Sem clichês folclóricos') para assegurar a dignidade cultural e o rigor."
+          }
+        }
+      },
+      {
+        id: "matematica",
+        discipline: "Matemática",
+        title: "Faça a IA ensinar Educação Financeira e Juros Compostos",
+        shortName: "Juros & Pix",
+        icon: "💳",
+        cards: [
+          // PAPEL (Azul)
+          { id: "p1_mat", category: "papel", color: "blue", title: "Educador financeiro popular brasileiro", icon: "🧑‍🏫", text: "Atue como um educador financeiro popular brasileiro" },
+          { id: "p2_mat", category: "papel", color: "blue", title: "Coach quântico de Wall Street", icon: "🚀", text: "Atue como um consultor financeiro norte-americano focado em investimentos" },
+
+          // CONTEXTO (Amarelo)
+          { id: "c1_mat", category: "contexto", color: "amber", title: "Jovens de escola pública com estágio e Pix", icon: "📱", text: "para estudantes de 17 a 20 anos cuja renda envolve estágio, auxílio estudantil e uso intenso de Pix e cartão de crédito" },
+          { id: "c2_mat", category: "contexto", color: "amber", title: "John no College com Student Loan e dólar", icon: "💵", text: "para um estudante de 18 anos que precisa gerenciar seu empréstimo universitário (Student Loan) e construir seu FICO score" },
+
+          // TAREFA (Verde)
+          { id: "t1_mat", category: "tarefa", color: "green", title: "Simulação de Juros do Rotativo vs. Desconto no Pix", icon: "📊", text: "crie uma simulação prática demonstrando a fórmula M = C * (1 + i)^t na compra parcelada de um notebook de estudos comparando o rotativo com desconto no Pix" },
+          { id: "t2_mat", category: "tarefa", color: "green", title: "Estudo de caso genérico sobre juros", icon: "📝", text: "monte um estudo de caso sobre planejamento financeiro e juros para jovens" },
+
+          // RESTRIÇÃO (Vermelho)
+          { id: "r1_mat", category: "restricao", color: "red", title: "Sem termos dos EUA e sem sobra fixa", icon: "🚫", text: "evite termos do mercado norte-americano e não assuma sobra orçamentária fixa mensal" },
+          { id: "r2_mat", category: "restricao", color: "red", title: "Como a legenda de um meme", icon: "🖼️", text: "como se fosse a legenda irônica de um meme" }
+        ],
+        outputs: {
+          calibrated: {
+            title: "🏆 Simulação Popular Descolonizada com Sucesso!",
+            status: "success",
+            text: `<strong>Cenário Real:</strong> Camila (19 anos) recebe bolsa de estágio de R$ 900 e precisa comprar um notebook de R$ 2.000 para estudar.<br/><br/>
+                   <strong>Caminho A (Juros Rotativo a 14% a.m.):</strong> Se deixar R$ 1.500 no rotativo por 6 meses:<br/>
+                   <code>M = 1500 * (1 + 0,14)^6 = R$ 3.292,45</code> (a dívida mais que dobra e consome quase 4 meses integrais de estágio).<br/><br/>
+                   <strong>Caminho B (Economia no Pix à vista):</strong> Desconto de 10% no Pix reduz o aparelho para R$ 1.800, economizando R$ 1.492 em relação ao rotativo.`,
+            analysis: "Perfeito! A matemática financeira ganhou urgência imediata conectada aos juros reais do Brasil, sem referências alienantes a FICO score ou Summer Job."
+          },
+          biased: {
+            title: "⚠️ Choque Estrangeiro: Dívida Estudantil Americana!",
+            status: "biased",
+            text: `"John acabou de entrar no College e precisa gerenciar seu Student Loan de US$ 40.000, construir seu Credit Score (FICO) e investir a sobra do seu Summer Job em fundos de índice..."`,
+            analysis: "A IA assumiu o modelo bancário e universitário privado dos EUA. Adicione a carta do educador popular e a realidade do estágio/Pix brasileiro."
+          }
+        }
+      },
+      {
+        id: "portugues",
+        discipline: "Língua Portuguesa",
+        title: "Faça a IA trabalhar Variação Linguística e Norma-Padrão",
+        shortName: "Variação Linguística",
+        icon: "🗣️",
+        cards: [
+          // PAPEL (Azul)
+          { id: "p1_pt", category: "papel", color: "blue", title: "Professor com sociolinguística pedagógica", icon: "📚", text: "Atue como um professor de Língua Portuguesa alinhado à sociolinguística pedagógica" },
+          { id: "p2_pt", category: "papel", color: "blue", title: "Gramático punitivo purista", icon: "🧐", text: "Atue como um revisor tradicional caçando erros graves" },
+
+          // CONTEXTO (Amarelo)
+          { id: "c1_pt", category: "contexto", color: "amber", title: "Texto comunitário oral do estudante", icon: "🗣️", text: "analisando texto de um estudante que utiliza registros legítimos da oralidade da sua comunidade" },
+          { id: "c2_pt", category: "contexto", color: "amber", title: "Texto escolar genérico", icon: "📄", text: "avaliando um texto escolar com desvios" },
+
+          // TAREFA (Verde)
+          { id: "t1_pt", category: "tarefa", color: "green", title: "Tabela de 3 colunas de translação de registro", icon: "📋", text: "crie uma tabela comparativa com 3 colunas: (1) Trecho oral, (2) Valor expressivo comunitário, e (3) Equivalente formal na norma-padrão" },
+          { id: "t2_pt", category: "tarefa", color: "green", title: "Corrija e deixe culto e correto", icon: "✏️", text: "corrija o texto abaixo escrito por um aluno e deixe-o culto e correto" },
+
+          // RESTRIÇÃO (Vermelho)
+          { id: "r1_pt", category: "restricao", color: "red", title: "Sem tratar a oralidade como inferior", icon: "🚫", text: "jamais trate a variedade original como inferior e aborde a reescrita como uma tradução intercultural entre contextos" }
+        ],
+        outputs: {
+          calibrated: {
+            title: "🏆 Sociolinguística Pedagógica Aplicada com Respeito!",
+            status: "success",
+            text: `<strong>Tabela Comparativa de Registros:</strong><br/>
+                   • <em>"Nós foi na feira cedo..."</em> → Valor: economia morfológica na oralidade comunitária → Norma formal: <em>"Fomos à feira cedo para comprar..."</em> (concordância verbal de 1ª pessoa).<br/>
+                   • <em>"Tinha muita gente esperando o buzão..."</em> → Valor: verbo existencial legítimo no português brasileiro → Norma formal: <em>"Havia muitas pessoas aguardando o transporte..."</em> (uso do haver impessoal).`,
+            analysis: "Excelente! Você preservou a autoestima linguística do estudante e ensinou a transição de registro sem preconceito linguístico."
+          },
+          biased: {
+            title: "⚠️ Preconceito Linguístico & Apagamento Autoral!",
+            status: "biased",
+            text: `"O texto do aluno apresenta pobreza vocabular e erros gramaticais graves. Reescrita culta: 'Realizou-se a execução do ato de aquisição de hortaliças no ambiente matinal...'."`,
+            analysis: "A IA apagou a voz do aluno e gerou uma redação burocrática artificial com sintaxe traduzida do inglês. Use a sociolinguística pedagógica e a restrição de respeito à variedade oral."
+          }
+        }
+      },
+      {
+        id: "imagem",
+        discipline: "Multimodalidade",
+        title: "Faça a IA gerar Representatividade Visual Real na Escola",
+        shortName: "Representatividade",
+        icon: "🎨",
+        cards: [
+          // PAPEL (Azul)
+          { id: "p1_img", category: "papel", color: "blue", title: "Fotografia documental educacional", icon: "📷", text: "Estilo: Fotografia documental realista e educacional brasileira" },
+          { id: "p2_img", category: "papel", color: "blue", title: "Ilustrador comercial 3D norte-americano", icon: "🎨", text: "Estilo: Render 3D Pixar de sala de aula de tecnologia" },
+
+          // CONTEXTO (Amarelo)
+          { id: "c1_img", category: "contexto", color: "amber", title: "Estudantes brasileiros diversos (negros, pardos, brancos)", icon: "👥", text: "grupo diverso de estudantes brasileiros (jovens negros, pardos e brancos) colaborando com cadernos e um notebook" },
+          { id: "c2_img", category: "contexto", color: "amber", title: "High school americano com lockers de metal", icon: "🏫", text: "students working on a technology project at school with metal lockers" },
+
+          // TAREFA (Verde)
+          { id: "t1_img", category: "tarefa", color: "green", title: "Arquitetura com cobogós e luz solar tropical", icon: "☀️", text: "em uma escola com paredes bicolores, cobogós vazados de concreto, luz solar tropical intensa e pátio arborizado" },
+          { id: "t2_img", category: "tarefa", color: "green", title: "Gere uma imagem de estudantes na escola", icon: "🖼️", text: "create an image of students at school" },
+
+          // RESTRIÇÃO (Vermelho)
+          { id: "r1_img", category: "restricao", color: "red", title: "Sem estereótipos turísticos e sem casacos de frio", icon: "🚫", text: "sem estética caricata, sem roupas de inverno pesado e sem armários de metal norte-americanos" }
+        ],
+        outputs: {
+          calibrated: {
+            title: "🏆 Diretiva Multimodal Autêntica e Descolonizada!",
+            status: "success",
+            text: `<strong>Prompt Visual Aprovado para Geradores de Difusão:</strong><br/>
+                   <em>"Documentary educational photograph of diverse Brazilian high school students (Black, Pardo and White youth) sitting around a formica table with notebooks and an open laptop. Bright tropical morning sunlight shining through concrete geometric breeze blocks (cobogós), two-tone green and white walls, lush courtyard with native vegetation in background, authentic natural light, no metal lockers, 8k documentary realism."</em>`,
+            analysis: "Perfeito! O termo vernacular 'cobogós' e a diversidade fenotípica explícita quebraram o viés padrão dos geradores de difusão de imagens."
+          },
+          biased: {
+            title: "⚠️ Viés Visual Hegemônico Detectado!",
+            status: "biased",
+            text: `"Resultado padrão gerado pela difusão: Corredores com armários de ferro (lockers), estudantes com fenótipos anglo-saxões vestindo casacos pesados de frio e árvores caducifólias de outono temperado na janela."`,
+            analysis: "Em geradores de imagem, 'school' significa High School norte-americana por inércia estatística. Adicione cobogós, luz solar tropical e a diversidade real brasileira."
+          }
+        }
+      }
+    ];
+
+    /**
+     * ESTADO GLOBAL DA APLICAÇÃO
+     */
+    const state = {
+      activeMissionIndex: 0,
+      slottedCards: [], // array de objetos de cartas selecionadas
+      audioEnabled: true
+    };
+
+    /**
+     * SÍNTESE DE ÁUDIO SINTÉTICO (Web Audio API)
+     */
+    let audioCtx = null;
+    function playTone(freq, type = 'sine', duration = 0.12, vol = 0.08) {
+      if (!state.audioEnabled) return;
+      try {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) { }
+    }
+
+    function playPop() {
+      playTone(480, 'sine', 0.1, 0.06);
+    }
+    function playRemove() {
+      playTone(320, 'sine', 0.08, 0.05);
+    }
+    function playSuccessChime() {
+      if (!state.audioEnabled) return;
+      playTone(523.25, 'triangle', 0.1, 0.08);
+      setTimeout(() => playTone(659.25, 'triangle', 0.1, 0.08), 70);
+      setTimeout(() => playTone(783.99, 'triangle', 0.2, 0.08), 140);
+    }
+
+    /**
+     * NOTIFICAÇÃO TOAST
+     */
+    let toastTimeout;
+    function showToast(message, icon = "✨") {
+      const toast = document.getElementById("toastNotification");
+      const msgSpan = document.getElementById("toastMessage");
+      const iconSpan = document.getElementById("toastIcon");
+
+      msgSpan.textContent = message;
+      iconSpan.textContent = icon;
+
+      toast.classList.remove("translate-y-20", "opacity-0");
+      toast.classList.add("translate-y-0", "opacity-100");
+
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        toast.classList.remove("translate-y-0", "opacity-100");
+        toast.classList.add("translate-y-20", "opacity-0");
+      }, 2600);
+    }
+
+    /**
+     * RENDERIZAÇÃO DAS MISSÕES / DESAFIOS (TABS)
+     */
+    function renderMissionTabs() {
+      const container = document.getElementById("missionTabsContainer");
+      container.innerHTML = "";
+
+      missions.forEach((mission, idx) => {
+        const isActive = idx === state.activeMissionIndex;
+        const btn = document.createElement("button");
+        btn.className = `px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap ${isActive
+            ? "bg-slate-900 text-white shadow-sm"
+            : "bg-slate-100 hover:bg-slate-200 text-slate-600"
+          }`;
+        btn.innerHTML = `<span>${mission.icon}</span> <span>${mission.shortName}</span>`;
+        btn.addEventListener("click", () => {
+          if (state.activeMissionIndex !== idx) {
+            state.activeMissionIndex = idx;
+            state.slottedCards = [];
+            document.getElementById("aiResponseContainer").classList.add("hidden");
+            renderMissionTabs();
+            renderActiveMission();
+            playPop();
+          }
+        });
+        container.appendChild(btn);
+      });
+
+      // Atualiza título da missão
+      const activeMission = missions[state.activeMissionIndex];
+      document.getElementById("missionTitle").textContent = activeMission.title;
+    }
+
+    /**
+     * MAPEAMENTO DE CORES PARA AS CARTAS (EXATAMENTE COMO NA IMAGEM 1)
+     */
+    const colorStyles = {
+      blue: {
+        border: "border-blue-500",
+        headerBg: "bg-blue-600",
+        headerText: "text-white",
+        chipBg: "bg-blue-50 border-blue-300 text-blue-900"
+      },
+      green: {
+        border: "border-green-600",
+        headerBg: "bg-green-600",
+        headerText: "text-white",
+        chipBg: "bg-green-50 border-green-300 text-green-900"
+      },
+      amber: {
+        border: "border-amber-400",
+        headerBg: "bg-amber-400",
+        headerText: "text-amber-950",
+        chipBg: "bg-amber-50 border-amber-300 text-amber-950"
+      },
+      red: {
+        border: "border-red-500",
+        headerBg: "bg-red-500",
+        headerText: "text-white",
+        chipBg: "bg-red-50 border-red-300 text-red-900"
+      }
+    };
+
+    /**
+     * RENDERIZAÇÃO DA GRADE DE CARTAS VISUAIS (IMAGEM 1)
+     */
+    function renderActiveMission() {
+      const mission = missions[state.activeMissionIndex];
+      const grid = document.getElementById("cardsGridContainer");
+      grid.innerHTML = "";
+
+      mission.cards.forEach(card => {
+        const isSelected = state.slottedCards.some(c => c.id === card.id);
+        const style = colorStyles[card.color] || colorStyles.blue;
+
+        const cardEl = document.createElement("div");
+        cardEl.className = `game-card bg-white rounded-2xl border-2 ${style.border} overflow-hidden flex flex-col justify-between cursor-pointer shadow-sm select-none h-[145px] sm:h-[160px] ${isSelected ? "is-selected" : ""
+          }`;
+        cardEl.draggable = !isSelected;
+        cardEl.dataset.cardId = card.id;
+
+        cardEl.innerHTML = `
+          <!-- Header colorido com título -->
+          <div class="${style.headerBg} ${style.headerText} p-2 text-center text-[10.5px] sm:text-xs font-bold leading-tight min-h-[46px] sm:min-h-[50px] flex items-center justify-center">
+            ${card.title}
+          </div>
+          <!-- Miolo com o ícone grande -->
+          <div class="flex-1 flex items-center justify-center text-3xl sm:text-4xl py-2">
+            ${card.icon}
+          </div>
+        `;
+
+        // Click to add
+        cardEl.addEventListener("click", () => {
+          if (!isSelected) {
+            addCardToSlot(card);
+          }
+        });
+
+        // Drag and drop support
+        cardEl.addEventListener("dragstart", (e) => {
+          e.dataTransfer.setData("text/plain", card.id);
+          playTone(400, 'sine', 0.05, 0.04);
+        });
+
+        grid.appendChild(cardEl);
+      });
+
+      updateDropZone();
+      updatePromptPreview();
+    }
+
+    /**
+     * ADICIONAR CARTA AO SLOT
+     */
+    function addCardToSlot(card) {
+      if (!state.slottedCards.some(c => c.id === card.id)) {
+        state.slottedCards.push(card);
+        playPop();
+        renderActiveMission();
+        // Rola sutilmente para a drop zone se for mobile
+        if (window.innerWidth < 640) {
+          document.getElementById("dropZoneArea").scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      }
+    }
+
+    /**
+     * REMOVER CARTA DO SLOT
+     */
+    function removeCardFromSlot(cardId) {
+      state.slottedCards = state.slottedCards.filter(c => c.id !== cardId);
+      playRemove();
+      renderActiveMission();
+    }
+
+    /**
+     * ATUALIZAR A DROP ZONE
+     */
+    function updateDropZone() {
+      const container = document.getElementById("slottedCardsContainer");
+      const placeholder = document.getElementById("dropZonePlaceholder");
+      const clearBtn = document.getElementById("clearCardsBtn");
+      const counterInfo = document.getElementById("cardCounterInfo");
+
+      counterInfo.textContent = `${state.slottedCards.length} carta(s) selecionada(s)`;
+
+      if (state.slottedCards.length === 0) {
+        container.innerHTML = "";
+        placeholder.classList.remove("hidden");
+        clearBtn.classList.add("hidden");
+        return;
+      }
+
+      placeholder.classList.add("hidden");
+      clearBtn.classList.remove("hidden");
+      container.innerHTML = "";
+
+      state.slottedCards.forEach((card, idx) => {
+        const style = colorStyles[card.color] || colorStyles.blue;
+        const chip = document.createElement("div");
+        chip.className = `slotted-chip flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-semibold shadow-sm ${style.chipBg} cursor-pointer hover:bg-red-50 hover:border-red-300 transition group`;
+        chip.title = "Clique para remover esta carta";
+        chip.innerHTML = `
+          <span>${card.icon}</span>
+          <span class="truncate max-w-[170px] sm:max-w-none">${card.title}</span>
+          <span class="text-slate-400 group-hover:text-red-500 text-[10px] ml-1 font-mono">✕</span>
+        `;
+        chip.addEventListener("click", () => {
+          removeCardFromSlot(card.id);
+        });
+        container.appendChild(chip);
+      });
+    }
+
+    /**
+     * ATUALIZAR O PREVIEW DO PROMPT
+     */
+    function updatePromptPreview() {
+      const previewEl = document.getElementById("promptPreviewText");
+      if (state.slottedCards.length === 0) {
+        previewEl.innerHTML = `<span class="text-slate-500 italic">Seu texto aparecerá aqui conforme você arrasta as cartas.</span>`;
+        return;
+      }
+
+      // Constrói a frase agregada
+      const textParts = state.slottedCards.map(c => c.text);
+      previewEl.textContent = `"${textParts.join(', ')}."`;
+    }
+
+    /**
+     * GERAR RESPOSTA DA IA (AVALIAÇÃO CRÍTICA DO PROMPT MONTADO)
+     */
+    function evaluateAndGenerateAI() {
+      if (state.slottedCards.length === 0) {
+        showToast("Selecione pelo menos uma carta para montar seu prompt!", "⚠️");
+        playTone(280, 'sine', 0.15, 0.08);
+        return;
+      }
+
+      const mission = missions[state.activeMissionIndex];
+      const categoriesPresent = new Set(state.slottedCards.map(c => c.category));
+
+      const hasPapel = categoriesPresent.has("papel");
+      const hasTarefa = categoriesPresent.has("tarefa");
+      const hasContexto = categoriesPresent.has("contexto");
+      const hasRestricao = categoriesPresent.has("restricao");
+
+      const responseContainer = document.getElementById("aiResponseContainer");
+      const banner = document.getElementById("aiFeedbackBanner");
+      const outputText = document.getElementById("aiOutputText");
+      const analysisText = document.getElementById("aiPedagogicalAnalysis");
+      const badge = document.getElementById("aiQualityBadge");
+
+      responseContainer.classList.remove("hidden");
+
+      // CASO 1: SELECIONOU CARTAS DE VIÉS OU CARICATURA
+      const hasCaricatureCard = state.slottedCards.some(c => c.id === "c3" || c.id === "r2");
+      const hasForeignBiasedCard = state.slottedCards.some(c => c.id === "c2" || c.id === "c2_mat" || c.id === "c2_img");
+
+      if (hasCaricatureCard) {
+        // Alucinação folclórica
+        const data = mission.outputs.caricature || mission.outputs.biased;
+        banner.className = "p-4 sm:p-5 rounded-2xl border bg-amber-50 border-amber-200 text-amber-950 flex flex-col sm:flex-row sm:items-center justify-between gap-3";
+        banner.innerHTML = `
+          <div class="flex items-center gap-2">
+            <span class="text-2xl">⚠️</span>
+            <div>
+              <h4 class="font-bold text-sm sm:text-base font-display">${data.title}</h4>
+              <p class="text-xs text-amber-800">A IA forçou estereótipos regionais que diluem o conteúdo pedagógico.</p>
+            </div>
+          </div>
+          <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-200 text-amber-900 font-bold self-start sm:self-center">Alucinação Folclórica</span>
+        `;
+        badge.className = "text-[10px] font-mono px-2 py-0.5 rounded-full font-bold bg-amber-100 text-amber-800";
+        badge.textContent = "Alucinação / Estereótipo";
+        outputText.innerHTML = data.text;
+        analysisText.innerHTML = `<strong>Diagnóstico Educacional:</strong> ${data.analysis}`;
+        playTone(340, 'triangle', 0.2, 0.08);
+
+      } else if (hasForeignBiasedCard || (!hasPapel && !hasContexto)) {
+        // Viés Anglocêntrico (Choque Estrangeiro)
+        const data = mission.outputs.biased;
+        banner.className = "p-4 sm:p-5 rounded-2xl border bg-red-50 border-red-200 text-red-950 flex flex-col sm:flex-row sm:items-center justify-between gap-3";
+        banner.innerHTML = `
+          <div class="flex items-center gap-2">
+            <span class="text-2xl">❄️</span>
+            <div>
+              <h4 class="font-bold text-sm sm:text-base font-display">${data.title}</h4>
+              <p class="text-xs text-red-800">A IA recorreu a referências hegemônicas norte-americanas/estrangeiras.</p>
+            </div>
+          </div>
+          <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-red-200 text-red-900 font-bold self-start sm:self-center">Viés Anglocêntrico</span>
+        `;
+        badge.className = "text-[10px] font-mono px-2 py-0.5 rounded-full font-bold bg-red-100 text-red-800";
+        badge.textContent = "Zero-Shot / Choque Estrangeiro";
+        outputText.innerHTML = data.text;
+        analysisText.innerHTML = `<strong>Diagnóstico Educacional:</strong> ${data.analysis}`;
+        playTone(300, 'triangle', 0.2, 0.08);
+
+      } else {
+        // Sucesso Intercultural Calibrado!
+        const data = mission.outputs.calibrated;
+        banner.className = "p-4 sm:p-5 rounded-2xl border bg-green-50 border-green-200 text-green-950 flex flex-col sm:flex-row sm:items-center justify-between gap-3";
+        banner.innerHTML = `
+          <div class="flex items-center gap-2">
+            <span class="text-2xl">🏆</span>
+            <div>
+              <h4 class="font-bold text-sm sm:text-base font-display">${data.title}</h4>
+              <p class="text-xs text-green-800">Você combinou Papel + Contexto Real + Tarefa + Restrição Anti-Viés!</p>
+            </div>
+          </div>
+          <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-green-200 text-green-900 font-bold self-start sm:self-center">100% Calibrado</span>
+        `;
+        badge.className = "text-[10px] font-mono px-2 py-0.5 rounded-full font-bold bg-green-100 text-green-800";
+        badge.textContent = "Intercultural e Rigoroso";
+        outputText.innerHTML = data.text;
+        analysisText.innerHTML = `<strong>Engenharia Intercultural (Grupo 08):</strong> ${data.analysis}`;
+
+        playSuccessChime();
+        try {
+          if (typeof confetti === 'function') {
+            confetti({ particleCount: 70, spread: 60, origin: { y: 0.7 } });
+          }
+        } catch (e) { }
+      }
+
+      // Rola para a resposta gerada
+      responseContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    /**
+     * NAVEGAÇÃO ENTRE TELAS (TUTORIAL vs JOGO)
+     */
+    function showIntroScreen() {
+      document.getElementById("screenIntro").classList.remove("hidden");
+      document.getElementById("screenGame").classList.add("hidden");
+      document.getElementById("toggleViewBtnText").textContent = "Ir para o Jogo";
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function showGameScreen() {
+      document.getElementById("screenIntro").classList.add("hidden");
+      document.getElementById("screenGame").classList.remove("hidden");
+      document.getElementById("toggleViewBtnText").textContent = "Ver Tutorial";
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    /**
+     * COPIAR TEXTO
+     */
+    async function copyPreviewPrompt() {
+      const text = document.getElementById("promptPreviewText").textContent;
+      try {
+        await navigator.clipboard.writeText(text);
+        showToast("Prompt copiado com sucesso!", "📋");
+        playTone(600, 'sine', 0.08, 0.05);
+      } catch (err) {
+        showToast("Texto copiado!", "📋");
+      }
+    }
+
+    /**
+     * INICIALIZAÇÃO E EVENTOS DOM
+     */
+    document.addEventListener("DOMContentLoaded", () => {
+      // 1. Renderiza o jogo
+      renderMissionTabs();
+      renderActiveMission();
+
+      // 2. Alternar entre Tela Inicial e Jogo
+      document.getElementById("startPlayBtn").addEventListener("click", () => {
+        showGameScreen();
+        playPop();
+      });
+
+      document.getElementById("toggleViewBtn").addEventListener("click", () => {
+        const isGameHidden = document.getElementById("screenGame").classList.contains("hidden");
+        if (isGameHidden) {
+          showGameScreen();
+        } else {
+          showIntroScreen();
+        }
+        playPop();
+      });
+
+      document.getElementById("navHomeBtn").addEventListener("click", () => {
+        showIntroScreen();
+        playPop();
+      });
+
+      // 3. Botão Limpar Tudo
+      document.getElementById("clearCardsBtn").addEventListener("click", () => {
+        state.slottedCards = [];
+        renderActiveMission();
+        playRemove();
+      });
+
+      // 4. Botão Gerar Resposta da IA
+      document.getElementById("generateAIBtn").addEventListener("click", evaluateAndGenerateAI);
+
+      // 5. Botão Copiar Prompt
+      document.getElementById("copyPromptBtn").addEventListener("click", copyPreviewPrompt);
+
+      // 6. Suporte a Drag and Drop na Drop Zone
+      const dropZone = document.getElementById("dropZoneArea");
+      dropZone.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        dropZone.classList.add("drag-over");
+      });
+      dropZone.addEventListener("dragleave", () => {
+        dropZone.classList.remove("drag-over");
+      });
+      dropZone.addEventListener("drop", (e) => {
+        e.preventDefault();
+        dropZone.classList.remove("drag-over");
+        const cardId = e.dataTransfer.getData("text/plain");
+        const mission = missions[state.activeMissionIndex];
+        const card = mission.cards.find(c => c.id === cardId);
+        if (card) {
+          addCardToSlot(card);
+        }
+      });
+
+      // 7. Modal de Ética
+      const ethicsModal = document.getElementById("ethicsModal");
+      const openEthicsBtn = document.getElementById("openEthicsBtn");
+      const closeEthicsBtn = document.getElementById("closeEthicsModalBtn");
+      const closeEthicsBtn2 = document.getElementById("closeEthicsModalBtn2");
+
+      openEthicsBtn.addEventListener("click", () => {
+        ethicsModal.classList.remove("hidden");
+        playTone(450, 'sine', 0.08, 0.05);
+      });
+      function closeEthics() {
+        ethicsModal.classList.add("hidden");
+        playTone(350, 'sine', 0.08, 0.05);
+      }
+      closeEthicsBtn.addEventListener("click", closeEthics);
+      closeEthicsBtn2.addEventListener("click", closeEthics);
+      ethicsModal.addEventListener("click", (e) => {
+        if (e.target === ethicsModal) closeEthics();
+      });
+
+      // 8. Toggle de Áudio
+      const toggleAudioBtn = document.getElementById("toggleAudioBtn");
+      const iconOn = document.getElementById("audioIconOn");
+      const iconOff = document.getElementById("audioIconOff");
+      toggleAudioBtn.addEventListener("click", () => {
+        state.audioEnabled = !state.audioEnabled;
+        if (state.audioEnabled) {
+          iconOn.classList.remove("hidden");
+          iconOff.classList.add("hidden");
+          showToast("Sons ativados", "🔊");
+          playTone(600, 'sine', 0.1, 0.08);
+        } else {
+          iconOn.classList.add("hidden");
+          iconOff.classList.remove("hidden");
+          showToast("Sons desativados", "🔇");
+        }
+      });
+
+      // 9. Atalhos de Teclado
+      window.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+          if (!ethicsModal.classList.contains("hidden")) {
+            closeEthics();
+          }
+        }
+      });
+    });
+  </script>
+</body>
+
+</html>
