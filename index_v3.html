@@ -208,11 +208,25 @@
     }
 
     @keyframes distractorPulse {
-      0% { transform: scale(1); }
-      25% { transform: scale(1.05) rotate(-1.5deg); }
-      50% { transform: scale(1.05) rotate(1.5deg); }
-      75% { transform: scale(1.02) rotate(-0.5deg); }
-      100% { transform: scale(1); }
+      0% {
+        transform: scale(1);
+      }
+
+      25% {
+        transform: scale(1.05) rotate(-1.5deg);
+      }
+
+      50% {
+        transform: scale(1.05) rotate(1.5deg);
+      }
+
+      75% {
+        transform: scale(1.02) rotate(-0.5deg);
+      }
+
+      100% {
+        transform: scale(1);
+      }
     }
   </style>
 </head>
@@ -250,7 +264,7 @@
           class="flex items-center gap-2 bg-slate-900/90 px-3 py-1.5 rounded-lg border border-slate-700 font-mono text-xs"
           title="Cartas cujo gabarito já foi investigado">
           <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
-          <span class="text-slate-400 hidden md:inline">Cartas Auditadas:</span>
+          <span class="text-slate-400 hidden md:inline">Cartas Concluídas:</span>
           <span id="progressCounter" class="font-bold text-amber-400">0/4</span>
         </div>
 
@@ -521,10 +535,6 @@
                       </svg>
                       Resposta Enviesada da IA (Choque Estrangeiro)
                     </span>
-                    <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 flex items-center gap-1">
-                      <span>🔎</span>
-                      <span>Auditoria Forense no Texto</span>
-                    </span>
                   </div>
                   <div id="biasedOutputText"
                     class="text-xs sm:text-sm text-slate-200 bg-brand-dark/70 p-3.5 rounded-lg border border-coral-500/20 leading-relaxed font-sans">
@@ -542,7 +552,6 @@
                     <div class="flex items-center gap-2 text-amber-400 text-xs font-mono font-bold uppercase">
                       <span>⚠️ A Armadilha da Tentativa Rasa (Alucinação &amp; Estereótipo)</span>
                     </div>
-                    <span class="text-[10px] font-mono text-amber-300/80">Auditável</span>
                   </div>
                   <div id="shallowAttemptContent"
                     class="text-xs text-slate-300 bg-brand-dark/70 p-3 rounded-lg border border-amber-500/20 leading-relaxed">
@@ -565,7 +574,7 @@
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                         </svg>
-                        Dossiê Forense: Evidências Detectadas
+                        Estrangeirismos / Caricaturas
                       </h4>
                       <span id="biasCounterBadge"
                         class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700">
@@ -945,17 +954,17 @@
         // Frente
         naivePrompt: "Crie exemplos práticos do dia a dia para ensinar condução, convecção e radiação térmica para alunos do ensino médio.",
         biasedOutput: "1. Convecção: O aquecedor central (calefação) aquecendo o ar frio do quarto no inverno.\n2. Radiação: Assar marshmallows perto de uma lareira acesa.\n3. Condução: O derretimento da neve acumulada no telhado de uma cabana aquecida.",
-        interactiveBiasedText: `1. Convecção: O <mark class="audit-target" data-audit="bias" data-index="0" title="Clique para auditar">aquecedor central (calefação)</mark> aquecendo o <mark class="audit-target" data-audit="distractor" data-feedback="O ar frio é um conceito termodinâmico universal e neutro, não uma imposição cultural hegemônica." title="Clique para auditar">ar frio do quarto</mark> no inverno.\n2. Radiação: <mark class="audit-target" data-audit="bias" data-index="1" title="Clique para auditar">Assar marshmallows</mark> perto de uma <mark class="audit-target" data-audit="distractor" data-feedback="Embora lareiras existam em poucas regiões frias, o viés central foi importar o costume de assar marshmallows. Foque em hábitos importados!" title="Clique para auditar">lareira acesa</mark>.\n3. Condução: O <mark class="audit-target" data-audit="bias" data-index="2" title="Clique para auditar">derretimento da neve acumulada</mark> no <mark class="audit-target" data-audit="distractor" data-feedback="O telhado é elemento construtivo universal; o viés crítico reside na neve acumulada." title="Clique para auditar">telhado de uma cabana</mark> aquecida.`,
+        interactiveBiasedText: `1. Convecção: O <mark class="audit-target" data-audit="bias" data-index="0" title="Clique para auditar">aquecedor central (calefação)</mark> aquecendo o <mark class="audit-target" data-audit="distractor" data-feedback="O ar frio é um conceito termodinâmico universal e neutro, não uma imposição cultural." title="Clique para auditar">ar frio do quarto</mark> no inverno.\n2. Radiação: <mark class="audit-target" data-audit="bias" data-index="1" title="Clique para auditar">Assar marshmallows</mark> perto de uma <mark class="audit-target" data-audit="distractor" data-feedback="Embora lareiras existam em poucas regiões frias, esse não é o viés central. Foque em hábitos importados!" title="Clique para auditar">lareira acesa</mark>.\n3. Condução: O <mark class="audit-target" data-audit="bias" data-index="2" title="Clique para auditar">derretimento da neve acumulada</mark> no <mark class="audit-target" data-audit="distractor" data-feedback="O telhado é elemento construtivo universal." title="Clique para auditar">telhado de uma cabana</mark> aquecida.`,
 
         shallowAttempt: {
           prompt: "Crie exemplos usando a cultura nordestina.",
           output: "Oxente, cabra da peste! Vamos estudar o calor do sertão escaldante assando um cuscuz no sol rachando da caatinga seca! (Infantiliza o aluno e dilui o rigor físico).",
-          interactiveOutput: `<mark class="audit-target" data-audit="bias" data-index="3" title="Clique para auditar">Oxente, cabra da peste!</mark> Vamos estudar o calor do sertão escaldante <mark class="audit-target" data-audit="distractor" data-feedback="O cuscuz é culinária e patrimônio regional autêntico; a caricatura forçada está no jargão jocoso ('Oxente, cabra da peste!')." title="Clique para auditar">assando um cuscuz</mark> no sol rachando da caatinga seca! (Infantiliza o aluno e dilui o rigor físico).`
+          interactiveOutput: `<mark class="audit-target" data-audit="bias" data-index="3" title="Clique para auditar">Oxente, cabra da peste!</mark> Vamos estudar o calor do sertão escaldante <mark class="audit-target" data-audit="distractor" data-feedback="O cuscuz é culinária e patrimônio regional autêntico." title="Clique para auditar">assando um cuscuz</mark> no sol rachando da caatinga seca! (Infantiliza o aluno e dilui o rigor físico).`
         },
 
         biasItems: [
-          { text: "Calefação e aquecedor central (realidade do hemisfério norte)", targetPhrase: "aquecedor central (calefação)", explanation: "Inexistente na quase totalidade das habitações brasileiras, desorienta o entendimento físico da convecção." },
-          { text: "Lareira e marshmallows", targetPhrase: "Assar marshmallows", explanation: "Costume importado da cultura anglo-saxônica/norte-americana, sem ressonância na vida cotidiana dos jovens." },
+          { text: "Calefação e aquecedor central (realidade do hemisfério norte)", targetPhrase: "aquecedor central (calefação)", explanation: "Inexistente na grande parte das habitações brasileiras, desorienta o entendimento físico da convecção." },
+          { text: "Lareira e marshmallows", targetPhrase: "Assar marshmallows", explanation: "Costume importado da cultura norte-americana, sem ressonância na vida cotidiana dos jovens." },
           { text: "Neve no telhado", targetPhrase: "derretimento da neve acumulada", explanation: "Fenômeno climático inexistente no território escolar da maior parte do Brasil e do Nordeste." },
           { text: "Exotização caricata e gírias forçadas na tentativa rasa", targetPhrase: "Oxente, cabra da peste!", explanation: "Reduz a cultura regional a uma pantomima folclórica jocosa e elimina o rigor científico dos conceitos." }
         ],
@@ -963,7 +972,7 @@
         // Verso
         calibratedPrompt: {
           persona: "Atue como um professor de Física do ensino médio em uma cidade de grande porte do interior da Bahia.",
-          context: "Meus estudantes enfrentam ilhas de calor urbanas, pegam ônibus cheios nos horários de pico e convivem com construções sem isolamento térmico e pouca arborização nas calçadas.",
+          context: "Os estudantes enfrentam ilhas de calor urbanas, pegam ônibus cheios nos horários de pico e convivem com construções sem isolamento térmico e pouca arborização nas calçadas.",
           task: "Explique condução, convecção e radiação térmica utilizando exatamente esse cotidiano urbano real (ex.: esperar o ônibus debaixo de uma árvore vs. sob cobertura, ou o fluxo de ar no transporte público).",
           restrictions: "Não utilize clichês folclóricos, não force gírias caricatas e mantenha o rigor científico das definições físicas."
         },
@@ -1006,13 +1015,13 @@
 
         naivePrompt: "Monte um estudo de caso sobre planejamento financeiro e juros para jovens de 18 anos.",
         biasedOutput: "John acabou de entrar no College e precisa gerenciar seu Student Loan (empréstimo estudantil de US$ 40.000), construir seu Credit Score (FICO) e investir a sobra do seu Summer Job em fundos de índice enquanto paga o financiamento do seu primeiro carro.",
-        interactiveBiasedText: `John acabou de entrar no <mark class="audit-target" data-audit="distractor" data-feedback="Embora 'College' seja um decalque do inglês, a incongruência estrutural profunda reside no modelo bancário de dívida educacional." title="Clique para auditar">College</mark> e precisa gerenciar seu <mark class="audit-target" data-audit="bias" data-index="0" title="Clique para auditar">Student Loan (empréstimo estudantil de US$ 40.000)</mark>, construir seu <mark class="audit-target" data-audit="bias" data-index="1" title="Clique para auditar">Credit Score (FICO)</mark> e investir a <mark class="audit-target" data-audit="bias" data-index="2" title="Clique para auditar">sobra do seu Summer Job</mark> em <mark class="audit-target" data-audit="distractor" data-feedback="Fundos de índice (ETFs) são instrumentos financeiros globais negociados inclusive na B3 brasileira, não um viés exclusivo." title="Clique para auditar">fundos de índice</mark> enquanto paga o <mark class="audit-target" data-audit="distractor" data-feedback="Financiamento de veículos é comum no Brasil; os verdadeiros fósseis culturais são o Student Loan e o Summer Job aos 18 anos." title="Clique para auditar">financiamento do seu primeiro carro</mark>.`,
+        interactiveBiasedText: `John acabou de entrar no <mark class="audit-target" data-audit="distractor" data-feedback="Embora 'College' seja um termo do inglês, a incongruência reside no modelo bancário de dívida educacional." title="Clique para auditar">College</mark> e precisa gerenciar seu <mark class="audit-target" data-audit="bias" data-index="0" title="Clique para auditar">Student Loan (empréstimo estudantil de US$ 40.000)</mark>, construir seu <mark class="audit-target" data-audit="bias" data-index="1" title="Clique para auditar">Credit Score (FICO)</mark> e investir a <mark class="audit-target" data-audit="bias" data-index="2" title="Clique para auditar">sobra do seu Summer Job</mark> em <mark class="audit-target" data-audit="distractor" data-feedback="Fundos de índice (ETFs) são instrumentos financeiros globais negociados inclusive na B3 brasileira, não um viés exclusivo." title="Clique para auditar">fundos de índice</mark> enquanto paga o <mark class="audit-target" data-audit="distractor" data-feedback="Financiamento de veículos é comum no Brasil." title="Clique para auditar">financiamento do seu primeiro carro</mark>.`,
         shallowAttempt: null,
 
         biasItems: [
           { text: "Dívida de Student Loan (modelo universitário dos EUA)", targetPhrase: "Student Loan (empréstimo estudantil de US$ 40.000)", explanation: "O modelo de endividamento universitário bancário dos EUA é incompatível com o sistema público gratuito e ProUni/FIES brasileiro." },
           { text: "Sistema de pontuação FICO Score", targetPhrase: "Credit Score (FICO)", explanation: "Métrica proprietária norte-americana; no Brasil a dinâmica envolve Serasa, Cadastro Positivo e bloqueios via Pix/contas digitais." },
-          { text: "Trabalho de verão (Summer Job) com sobra fixa em dólar", targetPhrase: "sobra do seu Summer Job", explanation: "Trabalho sazonal de verão remunerado em dólar para poupança não faz parte da base material de jovens trabalhadores no Brasil." }
+          { text: "Trabalho de verão (Summer Job) com sobra fixa em dólar", targetPhrase: "sobra do seu Summer Job", explanation: "Trabalho sazonal de verão remunerado em dólar para poupança não faz parte da realidade de jovens trabalhadores no Brasil." }
         ],
 
         calibratedPrompt: {
@@ -1471,7 +1480,7 @@
         playTone(320, 'sine', 0.14, 0.05);
         showAuditFeedback(
           "neutral",
-          "🔍 Termo Neutro / Sem Viés",
+          "🔍 Termo Neutro",
           `"${phrase}" — ${feedback}`
         );
         showToast("Termo neutro. Continue investigando termos importados ou caricaturas!", "🔍");
@@ -1785,7 +1794,7 @@
           });
         }
       } catch (e) { }
-      showToast("Parabéns! Todas as 4 cartas temáticas foram auditadas com sucesso!", "🏆");
+      showToast("Parabéns! Todas as 4 cartas temáticas foram concluídas com sucesso!", "🏆");
     }
 
     /**
