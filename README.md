@@ -4,8 +4,6 @@
 > **Tema:** Tradução e Adaptação Intercultural | **Conceito-base:** Prompt  
 > **Público-alvo:** Educadores e Estudantes do Ensino Médio
 
----
-
 ## 📌 1. Visão Geral do Projeto
 
 Os Modelos de Linguagem de Grande Escala (IAG / LLMs) são treinados predominantemente sobre gigantescos *corpora* textuais hegemônicos, com forte predominância do inglês e da cultura urbana e corporativa do Norte Global. 
@@ -15,7 +13,7 @@ Quando educadores ou estudantes brasileiros utilizam **prompts genéricos ("Zero
 ### A Armadilha da Tentativa Rasa (Alucinação Folclórica)
 Quando o usuário tenta contornar o problema com uma instrução superficial (ex.: *"Crie exemplos usando a cultura nordestina"*), o modelo frequentemente derrapa para a **caricatura forçada** (*"Oxente, cabra da peste! Vamos estudar o calor da caatinga assando um cuscuz no sol rachando!"*). Essa abordagem infantiliza os estudantes, folcloriza a cultura regional e dilui o rigor conceitual do conteúdo curricular.
 
-### A Solução do Grupo 08
+### A Solução
 O **Prompt com Sotaque** propõe a metodologia da **Engenharia de Prompt Intercultural**, sintetizada na equação:
 
 $$\mathbf{Prompt\ Intercultural} = \mathbf{Conceito\ Técnico} + \mathbf{Território\ Real\ (Contexto)} - \mathbf{Clichês\ Folclóricos\ (Restrição)}$$
@@ -29,7 +27,7 @@ A metodologia estrutura o prompt em 4 blocos fundamentais:
 | Pilar | Pergunta Orientadora | Função Pedagógica | Exemplo de Aplicação |
 |---|---|---|---|
 | **01. `[Persona]`** | *Quem fala e de onde fala?* | Define a ancoragem regional, identidade docente e postura ético-formativa do modelo. | `Atue como um educador financeiro popular brasileiro.` |
-| **02. `[Contexto]`** | *Qual é o cenário real/território?* | Insere a infraestrutura material concreta dos estudantes (transporte coletivo, clima tropical, arranjos financeiros via Pix). | `Estudantes de 17 a 20 anos cuja renda envolve estágio, trabalho autônomo e uso de cartão digital.` |
+| **02. `[Contexto]`** | *Qual é o cenário real/território?* | Insere a infraestrutura material concreta dos estudantes (transporte coletivo, clima tropical, arranjos financeiros via Pix). | `Considere estudantes de 17 a 20 anos cuja renda envolve estágio, trabalho autônomo e uso de cartão digital.` |
 | **03. `[Tarefa]`** | *O que deve ser explicado e como?* | Garante a transposição didática com rigor conceitual máximo, sem rebaixar a complexidade do objeto de ensino. | `Crie uma simulação prática demonstrando a fórmula M = C*(1+i)^t comparando rotativo vs. desconto no Pix.` |
 | **04. `[Negative Prompt]`** | *O que a IA está proibida de fazer?* | Interdita explicitamente clichês folclóricos, gírias forçadas e termos estrangeiros alienantes. | `Evite termos do mercado dos EUA, não use gírias caricatas e não assuma sobra orçamentária fixa mensal.` |
 
@@ -82,7 +80,7 @@ O projeto atende a quatro critérios centrais de letramento crítico em Intelig�
 
 ## 🚀 6. Como Executar o Projeto
 
-1. Clone o repositório ou baixe o arquivo `index.html`:
+1. Clone o repositório:
    ```bash
    git clone https://github.com/levin/prompt-com-sotaque.git
    cd prompt-com-sotaque
