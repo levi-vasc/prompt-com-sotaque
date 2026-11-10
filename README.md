@@ -33,8 +33,8 @@ A metodologia estrutura o prompt em 4 blocos fundamentais:
 | Pilar | Pergunta Orientadora | Função Pedagógica | Exemplo de Aplicação |
 |---|---|---|---|
 | **01. `[Persona]`** | *Quem fala e de onde fala?* | Define a ancoragem regional, identidade docente e postura ético-formativa do modelo. | `Atue como um educador financeiro popular brasileiro.` |
-| **02. `[Contexto Situado]`** | *Qual é o cenário real/território?* | Insere a infraestrutura material concreta dos estudantes (transporte coletivo, clima tropical, arranjos financeiros via Pix). | `Estudantes de 17 a 20 anos cuja renda envolve estágio, trabalho autônomo e uso de cartão digital.` |
-| **03. `[Tarefa Pedagógica]`** | *O que deve ser explicado e como?* | Garante a transposição didática com rigor conceitual máximo, sem rebaixar a complexidade do objeto de ensino. | `Crie uma simulação prática demonstrando a fórmula M = C*(1+i)^t comparando rotativo vs. desconto no Pix.` |
+| **02. `[Contexto]`** | *Qual é o cenário real/território?* | Insere a infraestrutura material concreta dos estudantes (transporte coletivo, clima tropical, arranjos financeiros via Pix). | `Estudantes de 17 a 20 anos cuja renda envolve estágio, trabalho autônomo e uso de cartão digital.` |
+| **03. `[Tarefa]`** | *O que deve ser explicado e como?* | Garante a transposição didática com rigor conceitual máximo, sem rebaixar a complexidade do objeto de ensino. | `Crie uma simulação prática demonstrando a fórmula M = C*(1+i)^t comparando rotativo vs. desconto no Pix.` |
 | **04. `[Negative Prompt]`** | *O que a IA está proibida de fazer?* | Interdita explicitamente clichês folclóricos, gírias forçadas e termos estrangeiros alienantes. | `Evite termos do mercado dos EUA, não use gírias caricatas e não assuma sobra orçamentária fixa mensal.` |
 
 ---
