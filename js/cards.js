@@ -128,7 +128,7 @@ const cardsData = [
   },
   {
     id: 3,
-    discipline: "Língua Portuguesa",
+    discipline: "Português",
     topic: "Variação Linguística vs. Norma-Padrão",
     badgeColor: "emerald",
     icon: "🗣️",
@@ -189,7 +189,7 @@ const cardsData = [
   },
   {
     id: 4,
-    discipline: "Multimodalidade",
+    discipline: "Artes",
     topic: "Representatividade Visual em IA de Imagem",
     badgeColor: "purple",
     icon: "🎨",
