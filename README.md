@@ -82,7 +82,7 @@ O projeto atende a quatro critérios centrais de letramento crítico em Intelig�
 
 1. Clone o repositório:
    ```bash
-   git clone https://github.com/levin/prompt-com-sotaque.git
+   git clone https://github.com/levi-vasc/prompt-com-sotaque
    cd prompt-com-sotaque
    ```
 2. Abra o arquivo `index.html` em qualquer navegador moderno (ex.: Chrome, Firefox).
