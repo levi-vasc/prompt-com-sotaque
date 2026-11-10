@@ -18,8 +18,6 @@ O **Prompt com Sotaque** propõe a metodologia da **Engenharia de Prompt Intercu
 
 $$\mathbf{Prompt\ Intercultural} = \mathbf{Conceito\ Técnico} + \mathbf{Território\ Real\ (Contexto)} - \mathbf{Clichês\ Folclóricos\ (Restrição)}$$
 
----
-
 ## 🧭 2. A Bússola de Engenharia Intercultural (Os 4 Pilares)
 
 A metodologia estrutura o prompt em 4 blocos fundamentais:
@@ -30,8 +28,6 @@ A metodologia estrutura o prompt em 4 blocos fundamentais:
 | **02. `[Contexto]`** | *Qual é o cenário real/território?* | Insere a infraestrutura material concreta dos estudantes (transporte coletivo, clima tropical, arranjos financeiros via Pix). | `Considere estudantes de 17 a 20 anos cuja renda envolve estágio, trabalho autônomo e uso de cartão digital.` |
 | **03. `[Tarefa]`** | *O que deve ser explicado e como?* | Garante a transposição didática com rigor conceitual máximo, sem rebaixar a complexidade do objeto de ensino. | `Crie uma simulação prática demonstrando a fórmula M = C*(1+i)^t comparando rotativo vs. desconto no Pix.` |
 | **04. `[Negative Prompt]`** | *O que a IA está proibida de fazer?* | Interdita explicitamente clichês folclóricos, gírias forçadas e termos estrangeiros alienantes. | `Evite termos do mercado dos EUA, não use gírias caricatas e não assuma sobra orçamentária fixa mensal.` |
-
----
 
 ## 🃏 3. O Baralho Temático das 4 Cartas
 
@@ -49,8 +45,6 @@ O laboratório interativo traz 4 cartas temáticas rigorosamente estruturadas:
 ### 🎨 Carta 04: Artes — Representatividade Visual em IA de Imagem
 - **Objetivo:** Gerar diretivas visuais onde a juventude escolar brasileira se reconheça com dignidade.
 
----
-
 ## ⚖️ 4. Ficha Crítica & Diretrizes Éticas
 
 O projeto atende a quatro critérios centrais de letramento crítico em Inteligência Artificial:
@@ -59,8 +53,6 @@ O projeto atende a quatro critérios centrais de letramento crítico em Intelig�
 2. **Transparência Algorítmica:** O viés cultural não é uma "falha acidental", mas o comportamento padrão esperado de modelos estatísticos treinados em uma cultura dominante.
 3. **Equidade Cognitiva:** A ancoragem territorial é condição prévia para a construção autêntica do conhecimento científico e cidadão.
 4. **Mitigação do Folclorismo:** A necessidade de *Negative Prompting* para barrar estereótipos que reduzem identidades culturais a esquetes cômicos.
-
----
 
 ## 🎮 5. Recursos Interativos da Aplicação Web
 
@@ -76,8 +68,6 @@ O projeto atende a quatro critérios centrais de letramento crítico em Intelig�
 - **Celebração com Confetes:** Animação comemorativa ao concluir as 4 cartas.
 - **Reset de Demonstração:** Botão que reinicia o estado da aplicação.
 
----
-
 ## 🚀 6. Como Executar o Projeto
 
 1. Clone o repositório:
@@ -91,8 +81,6 @@ O projeto atende a quatro critérios centrais de letramento crítico em Intelig�
      ```bash
      python -m http.server 8000
      ```
-
----
 
 ## 👥 Créditos & Autoria
 
