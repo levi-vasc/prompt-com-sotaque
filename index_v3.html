@@ -163,6 +163,57 @@
     .animate-glow-pulse {
       animation: glowPulse 5s ease-in-out infinite;
     }
+
+    /* Forensic Text Audit Engine (Estratégia 2: Click-to-Highlight) */
+    .audit-target {
+      display: inline-block;
+      cursor: pointer;
+      user-select: none;
+      border-radius: 4px;
+      padding: 1px 4px;
+      margin: 1px 0;
+      border-bottom: 2px dashed rgba(245, 158, 11, 0.6);
+      background-color: rgba(245, 158, 11, 0.1);
+      color: #f1f5f9;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .audit-target:hover {
+      background-color: rgba(245, 158, 11, 0.25);
+      border-bottom-color: #f59e0b;
+      color: #ffffff;
+      transform: translateY(-1px);
+    }
+
+    .audit-target.audit-found {
+      border-bottom: 2px solid #10b981;
+      background-color: rgba(16, 185, 129, 0.22);
+      color: #a7f3d0;
+      font-weight: 600;
+      box-shadow: 0 0 12px -2px rgba(16, 185, 129, 0.45);
+    }
+
+    .audit-target.audit-found::after {
+      content: " ✓";
+      color: #34d399;
+      font-size: 0.85em;
+      margin-left: 2px;
+    }
+
+    .audit-target.audit-distractor-pulse {
+      animation: distractorPulse 0.55s ease-in-out;
+      background-color: rgba(244, 63, 94, 0.25) !important;
+      border-bottom-color: #f43f5e !important;
+      color: #fecdd3 !important;
+    }
+
+    @keyframes distractorPulse {
+      0% { transform: scale(1); }
+      25% { transform: scale(1.05) rotate(-1.5deg); }
+      50% { transform: scale(1.05) rotate(1.5deg); }
+      75% { transform: scale(1.02) rotate(-0.5deg); }
+      100% { transform: scale(1); }
+    }
   </style>
 </head>
 
@@ -470,20 +521,28 @@
                       </svg>
                       Resposta Enviesada da IA (Choque Estrangeiro)
                     </span>
-                    <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-coral-500/20 text-coral-300">
-                      Viés Hegemônico
+                    <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 flex items-center gap-1">
+                      <span>🔎</span>
+                      <span>Auditoria Forense no Texto</span>
                     </span>
                   </div>
                   <div id="biasedOutputText"
                     class="text-xs sm:text-sm text-slate-200 bg-brand-dark/70 p-3.5 rounded-lg border border-coral-500/20 leading-relaxed font-sans">
                     <!-- Injected -->
                   </div>
+                  <!-- Barra de Análise Forense em Tempo Real -->
+                  <div id="auditFeedbackBar"
+                    class="mt-3 text-xs font-mono p-3 rounded-lg border border-slate-800 bg-brand-dark/95 text-slate-300 hidden transition-all duration-300 animate-in fade-in">
+                  </div>
                 </div>
 
                 <!-- Tentativa Rasa / Estereótipo (quando existir) -->
                 <div id="shallowAttemptBox" class="hidden rounded-xl bg-amber-950/20 border border-amber-500/30 p-4">
-                  <div class="flex items-center gap-2 mb-2 text-amber-400 text-xs font-mono font-bold uppercase">
-                    <span>⚠️ A Armadilha da Tentativa Rasa (Alucinação &amp; Estereótipo)</span>
+                  <div class="flex items-center justify-between mb-2">
+                    <div class="flex items-center gap-2 text-amber-400 text-xs font-mono font-bold uppercase">
+                      <span>⚠️ A Armadilha da Tentativa Rasa (Alucinação &amp; Estereótipo)</span>
+                    </div>
+                    <span class="text-[10px] font-mono text-amber-300/80">Auditável</span>
                   </div>
                   <div id="shallowAttemptContent"
                     class="text-xs text-slate-300 bg-brand-dark/70 p-3 rounded-lg border border-amber-500/20 leading-relaxed">
@@ -498,7 +557,7 @@
 
                 <div class="space-y-4">
 
-                  <!-- Caça ao Viés (Checkboxes Interativos) -->
+                  <!-- Dossiê Forense de Vieses Detectados -->
                   <div class="rounded-xl bg-slate-900/90 border border-slate-700/80 p-4">
                     <div class="flex items-center justify-between mb-2">
                       <h4 class="text-xs font-mono font-bold uppercase text-sky-400 flex items-center gap-2">
@@ -506,15 +565,15 @@
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                         </svg>
-                        Caça ao Viés: Identifique as Incongruências
+                        Dossiê Forense: Evidências Detectadas
                       </h4>
                       <span id="biasCounterBadge"
-                        class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-slate-800 text-slate-400">
+                        class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700">
                         0/0
                       </span>
                     </div>
                     <p class="text-xs text-slate-400 mb-2.5">
-                      Marque os "fósseis culturais importados" ou estereótipos na resposta da IA:
+                      Clique nos termos e expressões suspeitos no texto da IA para decodificar cada evidência crítica:
                     </p>
                     <div id="biasChecklist" class="space-y-2">
                       <!-- Injected via JS -->
@@ -886,17 +945,19 @@
         // Frente
         naivePrompt: "Crie exemplos práticos do dia a dia para ensinar condução, convecção e radiação térmica para alunos do ensino médio.",
         biasedOutput: "1. Convecção: O aquecedor central (calefação) aquecendo o ar frio do quarto no inverno.\n2. Radiação: Assar marshmallows perto de uma lareira acesa.\n3. Condução: O derretimento da neve acumulada no telhado de uma cabana aquecida.",
+        interactiveBiasedText: `1. Convecção: O <mark class="audit-target" data-audit="bias" data-index="0" title="Clique para auditar">aquecedor central (calefação)</mark> aquecendo o <mark class="audit-target" data-audit="distractor" data-feedback="O ar frio é um conceito termodinâmico universal e neutro, não uma imposição cultural hegemônica." title="Clique para auditar">ar frio do quarto</mark> no inverno.\n2. Radiação: <mark class="audit-target" data-audit="bias" data-index="1" title="Clique para auditar">Assar marshmallows</mark> perto de uma <mark class="audit-target" data-audit="distractor" data-feedback="Embora lareiras existam em poucas regiões frias, o viés central foi importar o costume de assar marshmallows. Foque em hábitos importados!" title="Clique para auditar">lareira acesa</mark>.\n3. Condução: O <mark class="audit-target" data-audit="bias" data-index="2" title="Clique para auditar">derretimento da neve acumulada</mark> no <mark class="audit-target" data-audit="distractor" data-feedback="O telhado é elemento construtivo universal; o viés crítico reside na neve acumulada." title="Clique para auditar">telhado de uma cabana</mark> aquecida.`,
 
         shallowAttempt: {
           prompt: "Crie exemplos usando a cultura nordestina.",
-          output: "Oxente, cabra da peste! Vamos estudar o calor do sertão escaldante assando um cuscuz no sol rachando da caatinga seca! (Infantiliza o aluno e dilui o rigor físico)."
+          output: "Oxente, cabra da peste! Vamos estudar o calor do sertão escaldante assando um cuscuz no sol rachando da caatinga seca! (Infantiliza o aluno e dilui o rigor físico).",
+          interactiveOutput: `<mark class="audit-target" data-audit="bias" data-index="3" title="Clique para auditar">Oxente, cabra da peste!</mark> Vamos estudar o calor do sertão escaldante <mark class="audit-target" data-audit="distractor" data-feedback="O cuscuz é culinária e patrimônio regional autêntico; a caricatura forçada está no jargão jocoso ('Oxente, cabra da peste!')." title="Clique para auditar">assando um cuscuz</mark> no sol rachando da caatinga seca! (Infantiliza o aluno e dilui o rigor físico).`
         },
 
         biasItems: [
-          { text: "Calefação e aquecedor central (realidade do hemisfério norte)", explanation: "Inexistente na quase totalidade das habitações brasileiras, desorienta o entendimento físico da convecção." },
-          { text: "Lareira e marshmallows", explanation: "Costume importado da cultura anglo-saxônica/norte-americana, sem ressonância na vida cotidiana dos jovens." },
-          { text: "Neve no telhado", explanation: "Fenômeno climático inexistente no território escolar da maior parte do Brasil e do Nordeste." },
-          { text: "Exotização caricata e gírias forçadas na tentativa rasa", explanation: "Reduz a cultura regional a uma pantomima folclórica jocosa e elimina o rigor científico dos conceitos." }
+          { text: "Calefação e aquecedor central (realidade do hemisfério norte)", targetPhrase: "aquecedor central (calefação)", explanation: "Inexistente na quase totalidade das habitações brasileiras, desorienta o entendimento físico da convecção." },
+          { text: "Lareira e marshmallows", targetPhrase: "Assar marshmallows", explanation: "Costume importado da cultura anglo-saxônica/norte-americana, sem ressonância na vida cotidiana dos jovens." },
+          { text: "Neve no telhado", targetPhrase: "derretimento da neve acumulada", explanation: "Fenômeno climático inexistente no território escolar da maior parte do Brasil e do Nordeste." },
+          { text: "Exotização caricata e gírias forçadas na tentativa rasa", targetPhrase: "Oxente, cabra da peste!", explanation: "Reduz a cultura regional a uma pantomima folclórica jocosa e elimina o rigor científico dos conceitos." }
         ],
 
         // Verso
@@ -945,12 +1006,13 @@
 
         naivePrompt: "Monte um estudo de caso sobre planejamento financeiro e juros para jovens de 18 anos.",
         biasedOutput: "John acabou de entrar no College e precisa gerenciar seu Student Loan (empréstimo estudantil de US$ 40.000), construir seu Credit Score (FICO) e investir a sobra do seu Summer Job em fundos de índice enquanto paga o financiamento do seu primeiro carro.",
+        interactiveBiasedText: `John acabou de entrar no <mark class="audit-target" data-audit="distractor" data-feedback="Embora 'College' seja um decalque do inglês, a incongruência estrutural profunda reside no modelo bancário de dívida educacional." title="Clique para auditar">College</mark> e precisa gerenciar seu <mark class="audit-target" data-audit="bias" data-index="0" title="Clique para auditar">Student Loan (empréstimo estudantil de US$ 40.000)</mark>, construir seu <mark class="audit-target" data-audit="bias" data-index="1" title="Clique para auditar">Credit Score (FICO)</mark> e investir a <mark class="audit-target" data-audit="bias" data-index="2" title="Clique para auditar">sobra do seu Summer Job</mark> em <mark class="audit-target" data-audit="distractor" data-feedback="Fundos de índice (ETFs) são instrumentos financeiros globais negociados inclusive na B3 brasileira, não um viés exclusivo." title="Clique para auditar">fundos de índice</mark> enquanto paga o <mark class="audit-target" data-audit="distractor" data-feedback="Financiamento de veículos é comum no Brasil; os verdadeiros fósseis culturais são o Student Loan e o Summer Job aos 18 anos." title="Clique para auditar">financiamento do seu primeiro carro</mark>.`,
         shallowAttempt: null,
 
         biasItems: [
-          { text: "Dívida de Student Loan (modelo universitário dos EUA)", explanation: "O modelo de endividamento universitário bancário dos EUA é incompatível com o sistema público gratuito e ProUni/FIES brasileiro." },
-          { text: "Sistema de pontuação FICO Score", explanation: "Métrica proprietária norte-americana; no Brasil a dinâmica envolve Serasa, Cadastro Positivo e bloqueios via Pix/contas digitais." },
-          { text: "Trabalho de verão (Summer Job) com sobra fixa em dólar", explanation: "Trabalho sazonal de verão remunerado em dólar para poupança não faz parte da base material de jovens trabalhadores no Brasil." }
+          { text: "Dívida de Student Loan (modelo universitário dos EUA)", targetPhrase: "Student Loan (empréstimo estudantil de US$ 40.000)", explanation: "O modelo de endividamento universitário bancário dos EUA é incompatível com o sistema público gratuito e ProUni/FIES brasileiro." },
+          { text: "Sistema de pontuação FICO Score", targetPhrase: "Credit Score (FICO)", explanation: "Métrica proprietária norte-americana; no Brasil a dinâmica envolve Serasa, Cadastro Positivo e bloqueios via Pix/contas digitais." },
+          { text: "Trabalho de verão (Summer Job) com sobra fixa em dólar", targetPhrase: "sobra do seu Summer Job", explanation: "Trabalho sazonal de verão remunerado em dólar para poupança não faz parte da base material de jovens trabalhadores no Brasil." }
         ],
 
         calibratedPrompt: {
@@ -1004,12 +1066,13 @@
 
         naivePrompt: "Corrija o texto abaixo escrito por um aluno e deixe-o culto e correto.",
         biasedOutput: "A IA apaga a autoria do estudante, classifica construções legítimas da oralidade brasileira como 'erros graves e pobreza vocabular' e reescreve o texto com jargão burocrático artificial e sintaxe decalcada do inglês ('Realizar a execução da ação ao invés de atuar').",
+        interactiveBiasedText: `A IA <mark class="audit-target" data-audit="bias" data-index="0" title="Clique para auditar">apaga a autoria do estudante</mark>, classifica <mark class="audit-target" data-audit="distractor" data-feedback="A oralidade brasileira é patrimônio expressivo legítimo; o viés cometido foi rotulá-la como déficit intelectual." title="Clique para auditar">construções legítimas da oralidade</mark> como <mark class="audit-target" data-audit="bias" data-index="1" title="Clique para auditar">'erros graves e pobreza vocabular'</mark> e <mark class="audit-target" data-audit="distractor" data-feedback="A reescrita formal em si foi solicitada; a distorção ideológica está em desqualificar o registro prévio do aluno." title="Clique para auditar">reescreve o texto</mark> com jargão burocrático artificial e sintaxe decalcada do inglês (<mark class="audit-target" data-audit="bias" data-index="2" title="Clique para auditar">'Realizar a execução da ação ao invés de atuar'</mark>).`,
         shallowAttempt: null,
 
         biasItems: [
-          { text: "Apagamento da voz autoral do aluno", explanation: "Substitui a identidade expressiva e os tropos comunitários por uma linguagem impessoal de gerador burocrático." },
-          { text: "Tratamento da oralidade regional como erro cognitivo", explanation: "Ignora os fundamentos da sociolinguística (Bagno, Possenti) e confunde variação de registro com déficit de raciocínio." },
-          { text: "Reescrita artificial com estrutura traduzida do inglês", explanation: "Importa construções passivas e nominalizações que soam artificiais no português brasileiro autêntico." }
+          { text: "Apagamento da voz autoral do aluno", targetPhrase: "apaga a autoria do estudante", explanation: "Substitui a identidade expressiva e os tropos comunitários por uma linguagem impessoal de gerador burocrático." },
+          { text: "Tratamento da oralidade regional como erro cognitivo", targetPhrase: "'erros graves e pobreza vocabular'", explanation: "Ignora os fundamentos da sociolinguística (Bagno, Possenti) e confunde variação de registro com déficit de raciocínio." },
+          { text: "Reescrita artificial com estrutura traduzida do inglês", targetPhrase: "'Realizar a execução da ação...'", explanation: "Importa construções passivas e nominalizações que soam artificiais no português brasileiro autêntico." }
         ],
 
         calibratedPrompt: {
@@ -1064,12 +1127,13 @@
 
         naivePrompt: "Create an image of students working on a technology project at school.",
         biasedOutput: "Sala de aula com arquitetura norte-americana (armários metálicos nos corredores, árvores de outono temperado na janela), estudantes com fenótipos padronizados anglo-saxões vestindo roupas de inverno pesado.",
+        interactiveBiasedText: `<mark class="audit-target" data-audit="distractor" data-feedback="A sala de aula é um ambiente escolar universal; o viés repousa na cenografia e no perfil dos personagens gerados." title="Clique para auditar">Sala de aula</mark> com arquitetura norte-americana (<mark class="audit-target" data-audit="bias" data-index="0" title="Clique para auditar">armários metálicos nos corredores</mark>, <mark class="audit-target" data-audit="bias" data-index="1" title="Clique para auditar">árvores de outono temperado na janela</mark>), estudantes com <mark class="audit-target" data-audit="bias" data-index="2" title="Clique para auditar">fenótipos padronizados anglo-saxões</mark> vestindo <mark class="audit-target" data-audit="distractor" data-feedback="Embora casacos pesados reforcem o clima temperado, o viés arquitetônico e fenotípico já sintetiza a incongruência." title="Clique para auditar">roupas de inverno pesado</mark>.`,
         shallowAttempt: null,
 
         biasItems: [
-          { text: "Arquitetura escolar estrangeira (lockers metálicos)", explanation: "Ambiente físico típico de 'high school' de cinema americano, alheio à arquitetura escolar pública brasileira." },
-          { text: "Clima temperado/outono norte-americano e roupas de frio", explanation: "Vegetação caducifólia e casacos pesados incompatíveis com a realidade climática tropical." },
-          { text: "Falta de diversidade fenotípica brasileira", explanation: "Exclusão da maioria negra, parda e mestiça que compõe a demografia escolar do Brasil." }
+          { text: "Arquitetura escolar estrangeira (lockers metálicos)", targetPhrase: "armários metálicos nos corredores", explanation: "Ambiente físico típico de 'high school' de cinema americano, alheio à arquitetura escolar pública brasileira." },
+          { text: "Clima temperado/outono norte-americano e roupas de frio", targetPhrase: "árvores de outono temperado na janela", explanation: "Vegetação caducifólia e casacos pesados incompatíveis com a realidade climática tropical." },
+          { text: "Falta de diversidade fenotípica brasileira", targetPhrase: "fenótipos padronizados anglo-saxões", explanation: "Exclusão da maioria negra, parda e mestiça que compõe a demografia escolar do Brasil." }
         ],
 
         calibratedPrompt: {
@@ -1301,6 +1365,10 @@
       const flipper = document.getElementById("cardFlipper");
       flipper.classList.remove("is-flipped");
 
+      // Limpa barra de feedback forense ao mudar de carta
+      const feedbackBar = document.getElementById("auditFeedbackBar");
+      if (feedbackBar) feedbackBar.classList.add("hidden");
+
       playTone(400, 'sine', 0.1, 0.05);
       renderTabs();
       renderActiveCard();
@@ -1334,6 +1402,171 @@
       updateBadge("badgeContextDetect", hasContext, "Contexto", "bg-sky-500/20 text-sky-300 border-sky-500/40");
       updateBadge("badgeTaskDetect", hasTask, "Tarefa", "bg-emerald-500/20 text-emerald-300 border-emerald-500/40");
       updateBadge("badgeNegativeDetect", hasNegative, "Restrições", "bg-red-500/20 text-red-300 border-red-500/40");
+    }
+
+    /**
+     * MOTOR DE AUDITORIA FORENSE NO TEXTO (ESTRATÉGIA 2)
+     */
+    function showAuditFeedback(type, title, message) {
+      const bar = document.getElementById("auditFeedbackBar");
+      if (!bar) return;
+      bar.classList.remove("hidden", "border-emerald-500/40", "text-emerald-300", "bg-emerald-950/40", "border-amber-500/40", "text-amber-300", "bg-amber-950/40");
+      if (type === "found") {
+        bar.classList.add("border-emerald-500/40", "text-emerald-300", "bg-emerald-950/40");
+      } else {
+        bar.classList.add("border-amber-500/40", "text-amber-300", "bg-amber-950/40");
+      }
+      bar.innerHTML = `<strong>${title}:</strong> ${message}`;
+      setTimeout(syncCardHeight, 50);
+    }
+
+    function handleAuditTokenClick(token, card) {
+      const auditType = token.getAttribute("data-audit");
+      const checkedSet = state.biasCheckedItems[card.id];
+
+      if (auditType === "bias") {
+        const bIdx = parseInt(token.getAttribute("data-index"), 10);
+        const biasItem = card.biasItems[bIdx];
+
+        if (!checkedSet.has(bIdx)) {
+          // Novo viés descoberto!
+          checkedSet.add(bIdx);
+          token.classList.add("audit-found");
+          token.setAttribute("title", "Viés identificado e catalogado no dossiê!");
+          playTone(600 + bIdx * 65, 'triangle', 0.12, 0.08);
+
+          showAuditFeedback(
+            "found",
+            "🎯 Evidência Confirmada",
+            `"${biasItem.targetPhrase}" decodificado! ${biasItem.explanation}`
+          );
+          showToast(`Evidência detectada: "${biasItem.targetPhrase}"`, "🎯");
+
+          renderBiasDossier(card);
+          renderTabs();
+          syncCardHeight();
+
+          // Se encontrou todos os vieses desta carta
+          if (checkedSet.size === card.biasItems.length) {
+            playSuccessChime();
+            showToast("Excelente investigação! Todos os vieses da carta foram desmascarados no texto.", "🏆");
+          }
+        } else {
+          // Já identificado anteriormente
+          playTone(460, 'sine', 0.08, 0.04);
+          showAuditFeedback(
+            "found",
+            "Evidência já catalogada",
+            `"${biasItem.targetPhrase}": ${biasItem.explanation}`
+          );
+        }
+      } else if (auditType === "distractor") {
+        // Distrator / Termo Neutro clicado
+        const feedback = token.getAttribute("data-feedback") || "Este trecho descreve um elemento neutro ou conceito universal sem viés cultural.";
+        const phrase = token.textContent.trim();
+
+        token.classList.add("audit-distractor-pulse");
+        setTimeout(() => token.classList.remove("audit-distractor-pulse"), 550);
+
+        playTone(320, 'sine', 0.14, 0.05);
+        showAuditFeedback(
+          "neutral",
+          "🔍 Termo Neutro / Sem Viés",
+          `"${phrase}" — ${feedback}`
+        );
+        showToast("Termo neutro. Continue investigando termos importados ou caricaturas!", "🔍");
+      }
+    }
+
+    function setupInteractiveAuditTokens(card) {
+      const frontCardEl = document.getElementById("cardFaceFront");
+      if (!frontCardEl) return;
+      const checkedSet = state.biasCheckedItems[card.id];
+      const tokens = frontCardEl.querySelectorAll(".audit-target");
+
+      tokens.forEach(token => {
+        const auditType = token.getAttribute("data-audit");
+        if (auditType === "bias") {
+          const bIdx = parseInt(token.getAttribute("data-index"), 10);
+          if (checkedSet.has(bIdx)) {
+            token.classList.add("audit-found");
+            token.setAttribute("title", "Viés identificado! Clique para rever o diagnóstico.");
+          } else {
+            token.classList.remove("audit-found");
+            token.setAttribute("title", "Clique para auditar este trecho.");
+          }
+        }
+
+        token.onclick = (e) => {
+          e.stopPropagation();
+          handleAuditTokenClick(token, card);
+        };
+      });
+    }
+
+    function renderBiasDossier(card) {
+      const container = document.getElementById("biasChecklist");
+      if (!container) return;
+      container.innerHTML = "";
+      const checkedSet = state.biasCheckedItems[card.id];
+
+      card.biasItems.forEach((item, bIdx) => {
+        const isFound = checkedSet.has(bIdx);
+        const slot = document.createElement("div");
+
+        if (isFound) {
+          slot.className = "p-3 rounded-xl border border-emerald-500/50 bg-emerald-950/30 text-slate-100 flex items-start gap-3 transition-all duration-300 shadow-sm shadow-emerald-950/50 animate-in fade-in";
+          slot.innerHTML = `
+            <div class="w-5 h-5 rounded-full bg-emerald-500/20 border border-emerald-400 text-emerald-300 flex items-center justify-center text-xs font-mono font-bold mt-0.5 flex-shrink-0">
+              ✓
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center justify-between gap-2 flex-wrap mb-1">
+                <span class="text-xs font-bold text-emerald-300 font-sans">
+                  Evidência 0${bIdx + 1}: "${item.targetPhrase}"
+                </span>
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-900/60 text-emerald-300 border border-emerald-500/40">
+                  Decodificado
+                </span>
+              </div>
+              <p class="text-[11px] text-emerald-300/90 font-mono leading-relaxed">
+                ↳ Diagnóstico: ${item.explanation}
+              </p>
+            </div>
+          `;
+        } else {
+          slot.className = "p-3 rounded-xl border border-dashed border-slate-700/80 bg-slate-900/40 text-slate-400 flex items-start gap-3 transition-all duration-300";
+          slot.innerHTML = `
+            <div class="w-5 h-5 rounded-full border border-slate-700 text-slate-500 flex items-center justify-center text-xs font-mono mt-0.5 flex-shrink-0">
+              ${bIdx + 1}
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center justify-between gap-2 flex-wrap mb-0.5">
+                <span class="text-xs font-mono font-semibold text-slate-400">
+                  ❓ Evidência 0${bIdx + 1} Oculta no Texto
+                </span>
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-slate-800 text-slate-500 border border-slate-700">
+                  Aguardando
+                </span>
+              </div>
+              <p class="text-[11px] text-slate-500 font-sans leading-relaxed">
+                Examine o texto da resposta da IA ao lado e clique no termo suspeito para decodificar.
+              </p>
+            </div>
+          `;
+        }
+
+        container.appendChild(slot);
+      });
+
+      // Atualiza badge de caça ao viés
+      const biasBadge = document.getElementById("biasCounterBadge");
+      if (biasBadge) {
+        biasBadge.textContent = `${checkedSet.size}/${card.biasItems.length} detectados`;
+        biasBadge.className = checkedSet.size === card.biasItems.length
+          ? "text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30"
+          : "text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700";
+      }
     }
 
     /**
@@ -1371,11 +1604,11 @@
         </div>
       `;
 
-      // 2. Prompt Ingênuo e Resposta Enviesada
+      // 2. Prompt Ingênuo e Resposta Enviesada Interativa (Estratégia 2: Auditoria Forense no Texto)
       document.getElementById("naivePromptText").textContent = `"${card.naivePrompt}"`;
 
       const biasedBox = document.getElementById("biasedOutputText");
-      biasedBox.innerHTML = card.biasedOutput.replace(/\n/g, '<br/>');
+      biasedBox.innerHTML = (card.interactiveBiasedText || card.biasedOutput).replace(/\n/g, '<br/>');
 
       // 3. Tentativa Rasa (se houver)
       const shallowBox = document.getElementById("shallowAttemptBox");
@@ -1384,73 +1617,19 @@
         shallowBox.classList.remove("hidden");
         shallowContent.innerHTML = `
           <div class="font-mono text-amber-300 mb-1">Prompt: "${card.shallowAttempt.prompt}"</div>
-          <div class="text-slate-200"><strong>Retorno Caricato:</strong> "${card.shallowAttempt.output}"</div>
+          <div class="text-slate-200"><strong>Retorno Caricato:</strong> ${card.shallowAttempt.interactiveOutput || `"${card.shallowAttempt.output}"`}</div>
         `;
       } else {
         shallowBox.classList.add("hidden");
       }
 
-      // 4. Checklist Caça ao Viés
-      const checklistContainer = document.getElementById("biasChecklist");
-      checklistContainer.innerHTML = "";
-      const checkedSet = state.biasCheckedItems[card.id];
+      // 4. Configuração dos Alvos Interativos no Texto (Click-to-Highlight)
+      setupInteractiveAuditTokens(card);
 
-      card.biasItems.forEach((item, bIdx) => {
-        const isChecked = checkedSet.has(bIdx);
-        const itemRow = document.createElement("div");
-        itemRow.className = `p-2.5 rounded-lg border transition-all cursor-pointer select-none flex items-start gap-3 ${isChecked
-          ? "bg-emerald-950/30 border-emerald-500/50 text-slate-100"
-          : "bg-slate-900/60 border-slate-700/60 text-slate-300 hover:border-slate-600"
-          }`;
+      // 5. Renderização do Dossiê Forense de Evidências (Substitui as antigas checkboxes)
+      renderBiasDossier(card);
 
-        itemRow.innerHTML = `
-          <input type="checkbox" id="bias_${card.id}_${bIdx}" ${isChecked ? 'checked' : ''} class="mt-1 w-4 h-4 rounded text-emerald-500 focus:ring-0 cursor-pointer accent-emerald-500">
-          <div class="flex-1">
-            <label for="bias_${card.id}_${bIdx}" class="text-xs font-medium cursor-pointer block ${isChecked ? 'text-emerald-300 font-semibold' : ''}">
-              ${item.text}
-            </label>
-            ${isChecked
-            ? `<p class="text-[11px] text-emerald-400/90 mt-1 font-mono leading-tight">↳ Diagnóstico: ${item.explanation}</p>`
-            : ''
-          }
-          </div>
-        `;
-
-        itemRow.addEventListener("click", (e) => {
-          if (e.target.tagName !== "INPUT") {
-            const checkbox = itemRow.querySelector("input");
-            checkbox.checked = !checkbox.checked;
-          }
-          const isNowChecked = itemRow.querySelector("input").checked;
-          if (isNowChecked) {
-            checkedSet.add(bIdx);
-            playTone(600 + bIdx * 60, 'triangle', 0.1, 0.08);
-          } else {
-            checkedSet.delete(bIdx);
-            playTone(350, 'sine', 0.08, 0.05);
-          }
-          renderActiveCard();
-          renderTabs();
-          syncCardHeight();
-
-          // Verifica se encontrou todos os vieses da carta
-          if (checkedSet.size === card.biasItems.length) {
-            playSuccessChime();
-            showToast("Excelente diagnóstico! Todos os vieses da carta foram identificados.", "🎯");
-          }
-        });
-
-        checklistContainer.appendChild(itemRow);
-      });
-
-      // Atualiza badge de caça ao viés
-      const biasBadge = document.getElementById("biasCounterBadge");
-      biasBadge.textContent = `${checkedSet.size}/${card.biasItems.length} detectados`;
-      biasBadge.className = checkedSet.size === card.biasItems.length
-        ? "text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30"
-        : "text-[10px] font-mono px-2 py-0.5 rounded-full bg-slate-800 text-slate-400";
-
-      // 5. Textarea de Rascunho
+      // 6. Textarea de Rascunho
       const draftTextarea = document.getElementById("studentPromptDraft");
       draftTextarea.value = state.studentDrafts[card.id] || "";
       updateDraftCharCount();
@@ -1584,6 +1763,8 @@
         // Se auditou todas as 4 cartas, dispara confete comemorativo!
         if (state.auditedCards.size === cardsData.length) {
           triggerCelebration();
+        } else if (state.biasCheckedItems[card.id].size < card.biasItems.length) {
+          showToast(`Você virou com ${state.biasCheckedItems[card.id].size}/${card.biasItems.length} evidências decodificadas no texto. Compare com o gabarito!`, "💡");
         }
       }
 
@@ -1781,6 +1962,8 @@
           });
           state.activeCardIndex = 0;
           document.getElementById("cardFlipper").classList.remove("is-flipped");
+          const feedbackBar = document.getElementById("auditFeedbackBar");
+          if (feedbackBar) feedbackBar.classList.add("hidden");
           renderTabs();
           renderActiveCard();
           syncCardHeight();
